@@ -1,0 +1,42 @@
+
+# Robots.txt optimizado para CGC Guatemala
+User-agent: *
+Allow: /
+
+# Permitir específicamente a bots importantes
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bingbot  
+Allow: /
+Crawl-delay: 1
+
+User-agent: Slurp
+Allow: /
+Crawl-delay: 2
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+# Bloquear directorios no importantes para SEO
+Disallow: /api/
+Disallow: /_next/
+Disallow: /node_modules/
+Disallow: /src/
+Disallow: /*.json$
+Disallow: /*.js$
+Disallow: /*.css$
+
+# Sitemap (cuando esté implementado en el servidor)
+Sitemap: https://contraloria.gob.gt/sitemap.xml
+
+# Información adicional
+# Host: contraloria.gob.gt
+# Crawl-delay general: 1 segundo

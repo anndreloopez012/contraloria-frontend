@@ -1,0 +1,79 @@
+
+{
+  "homeContent": {
+    "title": "Contenido Principal",
+    "subtitle": "Información institucional y servicios",
+    "version": "1.0",
+    "lastUpdated": "2024-12-27",
+    "sections": [
+      {
+        "id": "auditoria-social",
+        "title": "AUDITORÍA SOCIAL",
+        "type": "card-grid",
+        "priority": 1,
+        "active": true,
+        "items": [
+          {
+            "id": "denuncia-ciudadana",
+            "title": "Denuncia Ciudadana",
+            "subtitle": "contraloria.gob.gt",
+            "icon": "AlertTriangle",
+            "color": "text-orange-600",
+            "bgColor": "bg-orange-50",
+            "route": "/denuncia-ciudadana",
+            "description": "Sistema de denuncias ciudadanas"
+          },
+          {
+            "id": "auditoria-participativa",
+            "title": "Auditoría Participativa",
+            "subtitle": "Participación ciudadana",
+            "icon": "Search",
+            "color": "text-blue-600",
+            "bgColor": "bg-blue-50",
+            "route": "/auditoria-participativa",
+            "description": "Auditorías con participación ciudadana"
+          }
+        ]
+      },
+      {
+        "id": "servicios-institucionales",
+        "title": "SERVICIOS INTERINSTITUCIONALES",
+        "type": "card-grid",
+        "priority": 2,
+        "active": true,
+        "items": [
+          {
+            "id": "informacion-publica",
+            "title": "Información Pública",
+            "subtitle": "Acceso a información",
+            "icon": "FileSearch",
+            "color": "text-green-600",
+            "bgColor": "bg-green-50",
+            "route": "/informacion-publica",
+            "description": "Acceso a información pública"
+          },
+          {
+            "id": "informes-auditoria",
+            "title": "Informes de Auditoría",
+            "subtitle": "Resultados de auditorías",
+            "icon": "ClipboardCheck",
+            "color": "text-purple-600",
+            "bgColor": "bg-purple-50",
+            "route": "/informes-auditoria",
+            "description": "Informes y resultados de auditorías"
+          },
+          {
+            "id": "archivo-general",
+            "title": "Archivo General",
+            "subtitle": "Gestión documental",
+            "icon": "Archive",
+            "color": "text-indigo-600",
+            "bgColor": "bg-indigo-50",
+            "route": "/archivo-general",
+            "description": "Sistema de archivo y gestión documental"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,63 @@
+
+<!DOCTYPE html>
+<html lang="es-GT">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contraloría General de Cuentas - Guatemala</title>
+    <meta name="description" content="Portal oficial de la Contraloría General de Cuentas de Guatemala - Transparencia, Control y Fiscalización" />
+    <meta name="author" content="CGC Guatemala" />
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#2563eb" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="CGC Guatemala" />
+    <meta name="application-name" content="CGC Guatemala" />
+    <meta name="msapplication-TileColor" content="#2563eb" />
+    
+    <!-- PWA Links -->
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/pwa-192x192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/pwa-512x512.png" />
+    <link rel="apple-touch-icon" href="/pwa-192x192.png" />
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Fuentes para títulares y cuerpo de texto -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;500;600;700;800;900&family=Source+Sans+3:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="Contraloría General de Cuentas - Guatemala" />
+    <meta property="og:description" content="Portal oficial de la Contraloría General de Cuentas de Guatemala - Transparencia, Control y Fiscalización" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/pwa-512x512.png" />
+    <meta property="og:locale" content="es_GT" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Contraloría General de Cuentas - Guatemala" />
+    <meta name="twitter:description" content="Portal oficial de la Contraloría General de Cuentas de Guatemala" />
+    <meta name="twitter:image" content="/pwa-512x512.png" />
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- PWA Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+              console.log('SW registered: ', registration);
+            })
+            .catch((registrationError) => {
+              console.log('SW registration failed: ', registrationError);
+            });
+        });
+      }
+    </script>
+  </body>
+</html>

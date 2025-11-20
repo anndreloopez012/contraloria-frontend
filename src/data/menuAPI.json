@@ -1,0 +1,557 @@
+
+{
+  "sidebarMenu": {
+    "title": "Navegación Principal",
+    "subtitle": "Accede a todas las secciones",
+    "version": "1.0",
+    "lastUpdated": "2024-01-15",
+    "menuItems": [
+      {
+        "id": 1,
+        "title": "Inicio",
+        "route": "/",
+        "icon": "Home",
+        "description": "Página principal del sitio",
+        "color": "text-blue-600",
+        "bgColor": "bg-blue-50 hover:bg-blue-100",
+        "priority": 1,
+        "active": true
+      },
+      {
+        "id": 2,
+        "title": "Nosotros",
+        "route": "/nosotros",
+        "icon": "Users",
+        "description": "Conoce nuestra institución y equipo",
+        "color": "text-green-600",
+        "bgColor": "bg-green-50 hover:bg-green-100",
+        "priority": 2,
+        "active": true,
+        "submenus": [
+          {
+            "id": "nosotros-historia",
+            "title": "Historia",
+            "route": "/nosotros/historia"
+          },
+          {
+            "id": "nosotros-mision",
+            "title": "Misión y Visión", 
+            "route": "/nosotros/mision"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Legislación",
+        "route": "/legislacion",
+        "icon": "Scale",
+        "description": "Marco legal y normativo vigente",
+        "color": "text-purple-600",
+        "bgColor": "bg-purple-50 hover:bg-purple-100",
+        "priority": 3,
+        "active": true
+      },
+      {
+        "id": 4,
+        "title": "Servicios",
+        "route": "/servicios",
+        "icon": "Settings",
+        "description": "Servicios disponibles para ciudadanos",
+        "color": "text-orange-600",
+        "bgColor": "bg-orange-50 hover:bg-orange-100",
+        "priority": 4,
+        "active": true
+      },
+      {
+        "id": 5,
+        "title": "Publicaciones",
+        "route": "/publicaciones",
+        "icon": "BookOpen",
+        "description": "Documentos, boletines y publicaciones",
+        "color": "text-indigo-600",
+        "bgColor": "bg-indigo-50 hover:bg-indigo-100",
+        "priority": 5,
+        "active": true
+      },
+      {
+        "id": 6,
+        "title": "Enlaces",
+        "route": "/enlaces",
+        "icon": "Link",
+        "description": "Enlaces útiles y recursos externos",
+        "color": "text-teal-600",
+        "bgColor": "bg-teal-50 hover:bg-teal-100",
+        "priority": 6,
+        "active": true
+      },
+      {
+        "id": 7,
+        "title": "Contáctenos",
+        "route": "/contactenos",
+        "icon": "Phone",
+        "description": "Información de contacto y ubicación",
+        "color": "text-red-600",
+        "bgColor": "bg-red-50 hover:bg-red-100",
+        "priority": 7,
+        "active": true
+      }
+    ]
+  },
+  "mainMenu": {
+    "title": "Menú Principal",
+    "items": [
+      {
+        "id": "inicio",
+        "title": "Inicio",
+        "description": "Página principal",
+        "sections": []
+      },
+      {
+        "id": "nosotros", 
+        "title": "Nosotros",
+        "description": "Información institucional",
+        "sections": [
+          {
+            "id": "historia",
+            "title": "Historia",
+            "items": ["fundacion", "cronologia", "hitos"]
+          },
+          {
+            "id": "autoridades",
+            "title": "Autoridades",
+            "items": ["contralor", "subcontralor", "directores"]
+          }
+        ]
+      }
+    ]
+  },
+  "contentPages": {
+    "actualizacion-datos": {
+      "title": "Actualización de Datos",
+      "description": "Mantén tu información personal y profesional actualizada",
+      "categories": ["Todos", "Formularios", "Guías", "Videos", "Documentos"],
+      "content": [
+        {
+          "id": "form1",
+          "title": "Formulario de Actualización Personal",
+          "description": "Descarga el formulario oficial para actualizar tus datos personales",
+          "category": "Formularios",
+          "type": "pdf",
+          "col": 6,
+          "size": "2.1 MB",
+          "lastUpdated": "2024-12-25",
+          "url": "/placeholder.pdf",
+          "downloadCount": 1234,
+          "subtype": "Formulario Oficial",
+          "thumbnail": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=1000"
+        },
+        {
+          "id": "guide1",
+          "title": "Guía de Actualización de Datos",
+          "description": "Pasos detallados para completar tu actualización de datos correctamente",
+          "category": "Guías",
+          "type": "content",
+          "col": 8,
+          "lastUpdated": "2024-12-24",
+          "content": "<h2>Guía Paso a Paso para Actualización de Datos</h2><p>La actualización de datos es un proceso <strong>obligatorio</strong> que debe realizarse anualmente para mantener vigente tu información en nuestros sistemas.</p><h3>Documentos Requeridos</h3><ul><li>DPI vigente (fotocopia)</li><li>Constancia de trabajo actual</li><li>Comprobante de domicilio (no mayor a 3 meses)</li><li>Fotografía reciente tamaño cédula</li></ul><h3>Proceso de Actualización</h3><ol><li><strong>Descarga el formulario:</strong> Utiliza el formulario oficial disponible en esta página</li><li><strong>Completa la información:</strong> Llena todos los campos obligatorios</li><li><strong>Adjunta documentos:</strong> Incluye las fotocopias requeridas</li><li><strong>Presenta la documentación:</strong> En cualquiera de nuestras oficinas</li></ol><div class='bg-yellow-50 border-l-4 border-yellow-400 p-4 my-4'><p><strong>Importante:</strong> El proceso debe completarse antes del 31 de diciembre para evitar suspensión de servicios.</p></div>"
+        },
+        {
+          "id": "gallery1",
+          "title": "Oficinas de Atención",
+          "description": "Conoce nuestras ubicaciones para realizar tu trámite presencial",
+          "category": "Guías",
+          "type": "image",
+          "col": 12,
+          "lastUpdated": "2024-12-23",
+          "images": [
+            {
+              "id": "office1",
+              "src": "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2000",
+              "alt": "Oficina Central Guatemala",
+              "title": "Oficina Central - Ciudad de Guatemala"
+            },
+            {
+              "id": "office2",
+              "src": "https://images.unsplash.com/photo-1497366811353-6870744d04b2?q=80&w=2000",
+              "alt": "Oficina Quetzaltenango",
+              "title": "Oficina Regional - Quetzaltenango"
+            },
+            {
+              "id": "office3",
+              "src": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2000",
+              "alt": "Oficina Escuintla",
+              "title": "Oficina Regional - Escuintla"
+            },
+            {
+              "id": "office4",
+              "src": "https://images.unsplash.com/photo-1575515634081-74b50dad32e4?q=80&w=2000",
+              "alt": "Oficina Cobán",
+              "title": "Oficina Regional - Cobán, Alta Verapaz"
+            }
+          ]
+        },
+        {
+          "id": "video1",
+          "title": "Tutorial: Cómo Actualizar tus Datos",
+          "description": "Video explicativo del proceso completo de actualización",
+          "category": "Videos",
+          "type": "video",
+          "col": 8,
+          "lastUpdated": "2024-12-22",
+          "videos": [
+            {
+              "id": "tutorial1",
+              "title": "Proceso de Actualización Completo",
+              "type": "iframe",
+              "src": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+              "thumbnail": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1000"
+            }
+          ]
+        },
+        {
+          "id": "single-img1",
+          "title": "Horarios de Atención",
+          "description": "Consulta nuestros horarios de servicio al público",
+          "category": "Guías",
+          "type": "image",
+          "col": 4,
+          "lastUpdated": "2024-12-21",
+          "images": [
+            {
+              "id": "horarios",
+              "src": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2000",
+              "alt": "Horarios de atención",
+              "title": "Horarios de Servicio"
+            }
+          ]
+        },
+        {
+          "id": "videos-multi",
+          "title": "Videos Informativos",
+          "description": "Serie de videos sobre diferentes aspectos del proceso",
+          "category": "Videos",
+          "type": "video",
+          "col": 12,
+          "lastUpdated": "2024-12-20",
+          "videos": [
+            {
+              "id": "intro-video",
+              "title": "Introducción al Proceso",
+              "type": "iframe",
+              "src": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+              "thumbnail": "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1000"
+            },
+            {
+              "id": "docs-video",
+              "title": "Documentos Necesarios",
+              "type": "iframe",
+              "src": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+              "thumbnail": "https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=1000"
+            },
+            {
+              "id": "tips-video",
+              "title": "Consejos y Recomendaciones",
+              "type": "direct",
+              "src": "/placeholder-video.mp4",
+              "thumbnail": "https://images.unsplash.com/photo-1573164713988-8665fc963095?q=80&w=1000"
+            }
+          ]
+        },
+        {
+          "id": "checklist",
+          "title": "Lista de Verificación",
+          "description": "Asegúrate de tener todo listo antes de tu cita",
+          "category": "Documentos",
+          "type": "content",
+          "col": 6,
+          "lastUpdated": "2024-12-19",
+          "content": "<h2>Lista de Verificación - Actualización de Datos</h2><p>Antes de acudir a nuestras oficinas, verifica que tengas todos los documentos necesarios:</p><h3>✅ Documentos Obligatorios</h3><ul><li>✅ DPI vigente y fotocopia</li><li>✅ Formulario de actualización completo</li><li>✅ Constancia de trabajo actual</li><li>✅ Comprobante de domicilio reciente</li><li>✅ 2 fotografías tamaño cédula</li></ul><h3>📋 Documentos Adicionales (si aplica)</h3><ul><li>Acta de matrimonio (si cambió estado civil)</li><li>Partida de nacimiento de hijos menores</li><li>Título universitario (si completó estudios)</li></ul><div class='bg-green-50 border-l-4 border-green-400 p-4 my-4'><p><strong>💡 Consejo:</strong> Llama antes de tu visita para confirmar disponibilidad y reducir tiempo de espera.</p></div>"
+        }
+      ]
+    },
+    "legislacion": {
+      "title": "Marco Legal y Normativo",
+      "description": "Consulta todas las leyes, reglamentos y normativas vigentes",
+      "categories": ["Todas", "Leyes", "Reglamentos", "Acuerdos", "Resoluciones", "Circulares"],
+      "content": [
+        {
+          "id": "1",
+          "title": "Ley Orgánica de la Contraloría General de Cuentas",
+          "description": "Decreto Número 31-2002 del Congreso de la República de Guatemala",
+          "category": "Leyes",
+          "type": "pdf",
+          "col": 6,
+          "size": "1.2 MB",
+          "lastUpdated": "2024-12-20",
+          "url": "/placeholder.pdf",
+          "downloadCount": 2345,
+          "subtype": "Ley Orgánica",
+          "thumbnail": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=1000"
+        },
+        {
+          "id": "2",
+          "title": "Historia de la Contraloría",
+          "description": "Conoce la evolución histórica de nuestra institución",
+          "category": "Leyes",
+          "type": "content",
+          "col": 12,
+          "lastUpdated": "2024-12-18",
+          "content": "<h2>Historia de la Contraloría General de Cuentas</h2><p>La Contraloría General de Cuentas de Guatemala fue creada mediante el <strong>Decreto Número 31-2002</strong> del Congreso de la República, como una institución técnica descentralizada, con funciones fiscalizadoras de los bienes y recursos del Estado.</p><h3>Antecedentes Históricos</h3><p>Desde sus inicios, la institución ha sido pilar fundamental en el control y fiscalización de los recursos públicos, garantizando la <em>transparencia</em> y el buen uso de los fondos del Estado.</p><blockquote>La transparencia es la base de la confianza ciudadana en las instituciones públicas.</blockquote><ul><li>1945: Primeros antecedentes de control fiscal</li><li>1985: Constitución de la República establece el control gubernamental</li><li>2002: Creación de la CGC actual</li></ul>"
+        },
+        {
+          "id": "3",
+          "title": "Galería Institucional",
+          "description": "Imágenes de nuestras instalaciones y actividades",
+          "category": "Reglamentos",
+          "type": "image",
+          "col": 8,
+          "lastUpdated": "2024-12-15",
+          "images": [
+            {
+              "id": "img1",
+              "src": "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?q=80&w=2000",
+              "alt": "Instalaciones CGC",
+              "title": "Edificio Principal"
+            },
+            {
+              "id": "img2", 
+              "src": "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?q=80&w=2000",
+              "alt": "Sala de juntas",
+              "title": "Sala de Deliberaciones"
+            },
+            {
+              "id": "img3",
+              "src": "https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?q=80&w=2000",
+              "alt": "Centro de cómputo",
+              "title": "Centro Tecnológico"
+            }
+          ]
+        },
+        {
+          "id": "4",
+          "title": "Video Institucional",
+          "description": "Conoce nuestra misión y visión a través de este video",
+          "category": "Acuerdos",
+          "type": "video",
+          "col": 10,
+          "lastUpdated": "2024-12-12",
+          "videos": [
+            {
+              "id": "vid1",
+              "title": "Presentación Institucional",
+              "type": "iframe",
+              "src": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+              "thumbnail": "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1000"
+            }
+          ]
+        },
+        {
+          "id": "5",
+          "title": "Imagen Única - Misión",
+          "description": "Nuestra misión institucional",
+          "category": "Resoluciones",
+          "type": "image",
+          "col": 4,
+          "lastUpdated": "2024-12-10",
+          "images": [
+            {
+              "id": "single-img",
+              "src": "https://images.unsplash.com/photo-1556075798-4825dfaaf498?q=80&w=2000",
+              "alt": "Misión institucional",
+              "title": "Nuestra Misión"
+            }
+          ]
+        },
+        {
+          "id": "6",
+          "title": "Videos Educativos",
+          "description": "Serie de videos sobre transparencia y control",
+          "category": "Circulares",
+          "type": "video",
+          "col": 12,
+          "lastUpdated": "2024-12-08",
+          "videos": [
+            {
+              "id": "vid-edu1",
+              "title": "¿Qué es la Transparencia?",
+              "type": "iframe",
+              "src": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+              "thumbnail": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1000"
+            },
+            {
+              "id": "vid-edu2",
+              "title": "Control Gubernamental",
+              "type": "iframe", 
+              "src": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+              "thumbnail": "https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=1000"
+            },
+            {
+              "id": "vid-edu3",
+              "title": "Participación Ciudadana",
+              "type": "direct",
+              "src": "/placeholder-video.mp4",
+              "thumbnail": "https://images.unsplash.com/photo-1573164713988-8665fc963095?q=80&w=1000"
+            }
+          ]
+        }
+      ]
+    },
+    "servicios": {
+      "title": "Servicios al Ciudadano",
+      "description": "Servicios y trámites disponibles para la ciudadanía",
+      "categories": ["Todos", "Denuncias", "Consultas", "Trámites", "Certificaciones"],
+      "content": [
+        {
+          "id": "s1",
+          "title": "Formulario de Denuncia Ciudadana",
+          "description": "Formato oficial para presentar denuncias ante la CGC",
+          "category": "Denuncias",
+          "type": "pdf",
+          "col": 6,
+          "size": "0.5 MB",
+          "lastUpdated": "2024-12-22",
+          "url": "/placeholder.pdf",
+          "downloadCount": 3456,
+          "subtype": "Formulario",
+          "thumbnail": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=1000"
+        },
+        {
+          "id": "s2",
+          "title": "Proceso de Denuncia",
+          "description": "Conoce el paso a paso para presentar una denuncia",
+          "category": "Consultas",
+          "type": "content",
+          "col": 8,
+          "lastUpdated": "2024-12-20",
+          "content": "<h2>¿Cómo presentar una denuncia?</h2><p>El proceso de denuncia ciudadana es <strong>gratuito</strong> y confidencial. Sigue estos pasos:</p><ol><li><strong>Reúne la información:</strong> Documenta los hechos con evidencias</li><li><strong>Completa el formulario:</strong> Llena todos los campos requeridos</li><li><strong>Presenta la denuncia:</strong> En línea o presencialmente</li><li><strong>Seguimiento:</strong> Recibe el número de expediente</li></ol><div class='bg-blue-50 p-4 rounded-lg mt-4'><p><strong>Importante:</strong> Todas las denuncias son tratadas con total confidencialidad.</p></div>"
+        },
+        {
+          "id": "s3",
+          "title": "Oficinas de Atención",
+          "description": "Ubicaciones de nuestras oficinas",
+          "category": "Certificaciones",
+          "type": "image",
+          "col": 6,
+          "lastUpdated": "2024-12-18",
+          "images": [
+            {
+              "id": "office1",
+              "src": "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2000",
+              "alt": "Oficina central",
+              "title": "Oficina Central - Guatemala"
+            },
+            {
+              "id": "office2",
+              "src": "https://images.unsplash.com/photo-1497366811353-6870744d04b2?q=80&w=2000", 
+              "alt": "Oficina regional",
+              "title": "Oficina Regional - Quetzaltenango"
+            }
+          ]
+        },
+        {
+          "id": "s4",
+          "title": "Videos Tutoriales de Servicios",
+          "description": "Aprende a usar nuestros servicios en línea",
+          "category": "Trámites",
+          "type": "video",
+          "col": 10,
+          "lastUpdated": "2024-12-17",
+          "videos": [
+            {
+              "id": "tutorial-denuncias",
+              "title": "Cómo Presentar una Denuncia en Línea",
+              "type": "iframe",
+              "src": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+              "thumbnail": "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?q=80&w=1000"
+            },
+            {
+              "id": "tutorial-consultas",
+              "title": "Sistema de Consultas Ciudadanas",
+              "type": "iframe",
+              "src": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+              "thumbnail": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1000"
+            }
+          ]
+        }
+      ]
+    },
+    "publicaciones": {
+      "title": "Publicaciones y Boletines",
+      "description": "Informes, boletines y publicaciones oficiales de la CGC",
+      "categories": ["Todas", "Informes", "Boletines", "Estudios", "Memorias"],
+      "content": [
+        {
+          "id": "p1",
+          "title": "Informe Anual de Labores 2023",
+          "description": "Resumen completo de las actividades realizadas durante 2023",
+          "category": "Informes",
+          "type": "pdf",
+          "col": 8,
+          "size": "15.2 MB",
+          "lastUpdated": "2024-01-15",
+          "url": "/placeholder.pdf",
+          "downloadCount": 5432,
+          "subtype": "Informe Anual",
+          "thumbnail": "https://images.unsplash.com/photo-1554224154-26032fced8bd?q=80&w=1000"
+        },
+        {
+          "id": "p2",
+          "title": "Estadísticas de Transparencia",
+          "description": "Datos y análisis sobre transparencia gubernamental",
+          "category": "Boletines", 
+          "type": "content",
+          "col": 12,
+          "lastUpdated": "2024-12-15",
+          "content": "<h2>Estadísticas de Transparencia 2024</h2><p>Durante el presente año, hemos observado un <strong>incremento del 35%</strong> en las solicitudes de información pública.</p><h3>Datos Destacados</h3><table class='w-full border-collapse border border-gray-300 mt-4'><thead><tr class='bg-gray-100'><th class='border border-gray-300 p-2'>Mes</th><th class='border border-gray-300 p-2'>Solicitudes</th><th class='border border-gray-300 p-2'>Respuestas</th></tr></thead><tbody><tr><td class='border border-gray-300 p-2'>Enero</td><td class='border border-gray-300 p-2'>245</td><td class='border border-gray-300 p-2'>243</td></tr><tr><td class='border border-gray-300 p-2'>Febrero</td><td class='border border-gray-300 p-2'>312</td><td class='border border-gray-300 p-2'>310</td></tr></tbody></table>"
+        },
+        {
+          "id": "p3",
+          "title": "Conferencia de Prensa 2024",
+          "description": "Presentación de resultados anuales",
+          "category": "Estudios",
+          "type": "video",
+          "col": 10,
+          "lastUpdated": "2024-11-30",
+          "videos": [
+            {
+              "id": "conf2024",
+              "title": "Conferencia Anual 2024",
+              "type": "iframe",
+              "src": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+              "thumbnail": "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?q=80&w=1000"
+            }
+          ]
+        },
+        {
+          "id": "p4",
+          "title": "Galería de Eventos 2024",
+          "description": "Registro fotográfico de nuestros eventos más importantes",
+          "category": "Memorias",
+          "type": "image",
+          "col": 8,
+          "lastUpdated": "2024-12-10",
+          "images": [
+            {
+              "id": "evento1",
+              "src": "https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=2000",
+              "alt": "Conferencia anual",
+              "title": "Conferencia Anual de Transparencia"
+            },
+            {
+              "id": "evento2",
+              "src": "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?q=80&w=2000",
+              "alt": "Seminario internacional",
+              "title": "Seminario Internacional de Control Fiscal"
+            },
+            {
+              "id": "evento3",
+              "src": "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?q=80&w=2000",
+              "alt": "Capacitación técnica",
+              "title": "Jornada de Capacitación Técnica"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,149 @@
+
+{
+  "socialMedia": {
+    "title": "REDES SOCIALES",
+    "subtitle": "Síguenos en nuestras redes oficiales",
+    "version": "2.0",
+    "lastUpdated": "2024-12-28",
+    "description": "API simulada para contenido de redes sociales de la Contraloría General de Guatemala",
+    "platforms": [
+      {
+        "id": "twitter",
+        "name": "Twitter",
+        "handle": "@Contraloria_gt",
+        "icon": "Twitter",
+        "color": "#1DA1F2",
+        "url": "https://twitter.com/Contraloria_gt",
+        "description": "Cuenta oficial de Twitter de la Contraloría General de Cuentas de Guatemala",
+        "posts": [
+          {
+            "id": "post-1",
+            "content": "Contraloría General de Cuentas denuncia construcción de Parque Bicentenario Zona 8, Cobán, Alta Verapaz",
+            "date": "2 jul. 2021",
+            "engagement": {
+              "likes": 4,
+              "retweets": 2,
+              "comments": 1
+            },
+            "image": "/lovable-uploads/e41281cc-ccdb-4d0d-894d-4c84cee30324.png",
+            "user": {
+              "name": "Contraloría Ge...",
+              "handle": "@C...",
+              "avatar": "/lovable-uploads/e41281cc-ccdb-4d0d-894d-4c84cee30324.png",
+              "verified": true
+            },
+            "type": "post_with_image"
+          },
+          {
+            "id": "post-2",
+            "content": "La Contraloría General de Cuentas presentó una Denuncia Penal contra la Dra. María Amelia Flores González, Ministra de @MinSaludGuate por los delitos de Incumplimiento de Deberes y Abuso de Autoridad.",
+            "date": "28 jun. 2021",
+            "engagement": {
+              "likes": 12,
+              "retweets": 8,
+              "comments": 3
+            },
+            "user": {
+              "name": "Contraloría Ge...",
+              "handle": "@C...",
+              "avatar": "/lovable-uploads/e41281cc-ccdb-4d0d-894d-4c84cee30324.png",
+              "verified": true
+            },
+            "type": "text_post"
+          }
+        ]
+      },
+      {
+        "id": "facebook",
+        "name": "Facebook",
+        "handle": "ContraloriaGuatemala",
+        "icon": "Facebook",
+        "color": "#4267B2",
+        "url": "https://facebook.com/ContraloriaGuatemala",
+        "description": "Página oficial de Facebook de la Contraloría General de Cuentas de Guatemala",
+        "posts": [
+          {
+            "id": "fb-post-1",
+            "content": "La Contraloría General de Cuentas presentó una Denuncia Penal contra la Dra. María Amelia Flores González, Ministra de @MinSaludGuate por los delitos de Incumplimiento de Deberes y Abuso de Autoridad en el manejo de recursos destinados para combatir la pandemia del COVID-19.",
+            "date": "25 jun. 2021",
+            "engagement": {
+              "likes": 234,
+              "comments": 67,
+              "shares": 45
+            },
+            "user": {
+              "name": "Contraloría General de Cuentas",
+              "handle": "ContraloriaGuatemala",
+              "avatar": "/lovable-uploads/e41281cc-ccdb-4d0d-894d-4c84cee30324.png",
+              "verified": true
+            },
+            "type": "text_post"
+          }
+        ]
+      },
+      {
+        "id": "youtube",
+        "name": "Contraloría TV",
+        "handle": "ContraloriaTV",
+        "icon": "Youtube",
+        "color": "#FF0000",
+        "url": "https://youtube.com/ContraloriaTV",
+        "description": "Canal oficial de YouTube de la Contraloría General de Cuentas de Guatemala",
+        "videos": [
+          {
+            "id": "video-1",
+            "title": "Requisitos para presentar denuncias ciudadanas",
+            "thumbnail": "/lovable-uploads/e41281cc-ccdb-4d0d-894d-4c84cee30324.png",
+            "duration": "12:34",
+            "views": "1,234 views",
+            "publishedAt": "1 día",
+            "description": "Tutorial sobre los requisitos necesarios para presentar denuncias ciudadanas ante la Contraloría",
+            "category": "Tutorial",
+            "likes": 45,
+            "dislikes": 2
+          },
+          {
+            "id": "video-2",
+            "title": "Video Tutorial: Cómo acceder al portal web",
+            "thumbnail": "/lovable-uploads/e41281cc-ccdb-4d0d-894d-4c84cee30324.png",
+            "duration": "8:45",
+            "views": "2,567 views",
+            "publishedAt": "3 días",
+            "description": "Guía paso a paso para navegar en el portal web de la Contraloría",
+            "category": "Tutorial",
+            "likes": 78,
+            "dislikes": 1
+          },
+          {
+            "id": "video-3",
+            "title": "A partir del 04 de enero: Nuevos procedimientos",
+            "thumbnail": "/lovable-uploads/e41281cc-ccdb-4d0d-894d-4c84cee30324.png",
+            "duration": "15:20",
+            "views": "5,123 views",
+            "publishedAt": "1 semana",
+            "description": "Información sobre los nuevos procedimientos que entran en vigor",
+            "category": "Información",
+            "likes": 156,
+            "dislikes": 8
+          }
+        ]
+      }
+    ],
+    "apiInfo": {
+      "version": "2.0",
+      "endpoints": [
+        "/api/social/twitter/posts",
+        "/api/social/facebook/posts", 
+        "/api/social/youtube/videos"
+      ],
+      "updateFrequency": "daily",
+      "lastSync": "2024-12-28T10:30:00Z"
+    },
+    "additionalInfo": {
+      "website": "www.contraloria.gob.gt",
+      "email": "info@contraloria.gob.gt",
+      "phone": "+502 2232-7777",
+      "address": "9a. Avenida 4-67, Zona 1, Guatemala, Guatemala"
+    }
+  }
+}

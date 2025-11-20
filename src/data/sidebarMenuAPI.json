@@ -1,0 +1,88 @@
+
+{
+  "sidebarMenu": {
+    "title": "Servicios a usuarios",
+    "subtitle": "Accede a todos los servicios disponibles",
+    "version": "1.1",
+    "lastUpdated": "2024-12-27",
+    "menuItems": [
+      {
+        "id": 1,
+        "title": "Estado de Cuenta",
+        "route": "/estado-cuenta",
+        "icon": "FileText",
+        "description": "Consulta el estado de tu cuenta y movimientos",
+        "color": "text-slate-700",
+        "bgColor": "bg-slate-50 hover:bg-slate-100 border-slate-200",
+        "priority": 1,
+        "active": true
+      },
+      {
+        "id": 2,
+        "title": "Solicitud de Finiquito",
+        "route": "/solicitud-finiquito",
+        "icon": "FileText",
+        "description": "Realiza tu solicitud de finiquito en línea",
+        "color": "text-slate-700",
+        "bgColor": "bg-slate-50 hover:bg-slate-100 border-slate-200",
+        "priority": 2,
+        "active": true
+      },
+      {
+        "id": 3,
+        "title": "Comunicaciones Electrónicas",
+        "route": "/comunicaciones-electronicas",
+        "icon": "Mail",
+        "description": "Gestiona tus comunicaciones electrónicas",
+        "color": "text-slate-700",
+        "bgColor": "bg-slate-50 hover:bg-slate-100 border-slate-200",
+        "priority": 3,
+        "active": true
+      },
+      {
+        "id": 4,
+        "title": "Registro de títulos",
+        "route": "/registro-titulos",
+        "icon": "Book",
+        "description": "Registra y consulta títulos académicos",
+        "color": "text-slate-700",
+        "bgColor": "bg-slate-50 hover:bg-slate-100 border-slate-200",
+        "priority": 4,
+        "active": true
+      },
+      {
+        "id": 5,
+        "title": "Actualización de Datos",
+        "route": "/actualizacion-datos",
+        "icon": "RefreshCcw",
+        "description": "Actualiza tu información personal",
+        "color": "text-slate-700",
+        "bgColor": "bg-slate-50 hover:bg-slate-100 border-slate-200",
+        "priority": 5,
+        "active": true
+      },
+      {
+        "id": 6,
+        "title": "Declaración Jurada Patrimonial",
+        "route": "/declaracion-patrimonial",
+        "icon": "FileText",
+        "description": "Presenta tu declaración jurada patrimonial",
+        "color": "text-slate-700",
+        "bgColor": "bg-slate-50 hover:bg-slate-100 border-slate-200",
+        "priority": 6,
+        "active": true
+      },
+      {
+        "id": 7,
+        "title": "Manuales y Procedimientos",
+        "route": "/manuales-procedimientos",
+        "icon": "Book",
+        "description": "Consulta manuales y procedimientos en PDF",
+        "color": "text-slate-700",
+        "bgColor": "bg-slate-50 hover:bg-slate-100 border-slate-200",
+        "priority": 7,
+        "active": true
+      }
+    ]
+  }
+}
