@@ -4,7 +4,7 @@
  *
  * ¿Dónde definir valores?
  * 1) Variables Vite (recomendado para despliegues):
- *    - VITE_CGC_API_HOST: Host base de la API (p. ej. https://adm-cms.cgc.gob.gt)
+ *    - VITE_CGC_API_HOST: Host base de la API (p. ej. https://adm-cms.contraloria.gob.gt)
  *    - VITE_CGC_API_TOKEN: Token Bearer para autenticación contra Strapi v5
  *
  * 2) Variables globales en window (útil para pruebas rápidas en el navegador):
@@ -46,7 +46,7 @@ const sanitizeViteHost = (host?: string | null) => {
  * DEFAULT_HOST
  * - Intenta cargar desde Vite (.env -> import.meta.env.VITE_CGC_API_HOST). Si no existe, usa el valor hardcoded anterior.
  */
-const DEFAULT_HOST = sanitizeViteHost(viteEnv?.VITE_CGC_API_HOST) || 'https://adm-cms.cgc.gob.gt';
+const DEFAULT_HOST = sanitizeViteHost(viteEnv?.VITE_CGC_API_HOST) || 'https://adm-cms.contraloria.gob.gt';
 
 /**
  * DEFAULT_TOKEN
