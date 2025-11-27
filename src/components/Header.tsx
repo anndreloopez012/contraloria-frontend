@@ -7,6 +7,7 @@ import MobileMenu from './MobileMenu';
 import ExternalLinks from './ExternalLinks';
 import SocialMenuItems from './SocialMenuItems';
 import SearchModal from './SearchModal';
+import NotificationCenter from './NotificationCenter';
 import { useContentAPI } from '@/hooks/useContentAPI';
 import { useGlobalInfo } from '@/hooks/useGlobalInfo';
 
@@ -220,6 +221,11 @@ const Header: React.FC<HeaderProps> = ({ showSidebarButton = false, onSidebarBut
 
               {/* Botones de la derecha */}
               <div className="flex items-center justify-end space-x-1 flex-shrink-0">
+                {/* Botón de notificaciones - Desktop y Tablet */}
+                <div className="hidden md:flex">
+                  <NotificationCenter />
+                </div>
+
                 {/* Botón de búsqueda - Desktop y Tablet */}
                 <div className="hidden md:flex">
                   <Button
