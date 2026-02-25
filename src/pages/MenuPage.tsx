@@ -243,6 +243,24 @@ const MenuPage = () => {
 
   const availableVersions = detectPDFVersions();
 
+  const getVersionColor = (version: string): string | undefined => {
+    if (version.includes('Diario de Centroamérica')) return '#0075bf';
+    if (version.includes('Contraloría General de Cuentas')) return '#0075bf';
+    if (version.includes('Arte Final')) return '#878787';
+    return undefined;
+  };
+
+  const getVersionFromDescription = (description: string): string | null => {
+    const knownVersions = [
+      'Versión Contraloría General de Cuentas',
+      'Versión Arte Final',
+      'Versión Diario de Centroamérica'
+    ];
+
+    const matchedVersion = knownVersions.find(version => description.includes(version));
+    return matchedVersion || null;
+  };
+
   // Establecer versión por defecto cuando se detectan versiones
   useEffect(() => {
     if (availableVersions.length > 0 && selectedVersion === null) {
@@ -421,7 +439,10 @@ const MenuPage = () => {
     
     // Obtener categorías del PDF
     const itemCategories = extractCategoriesFromPDF(item);
-    const buttonColor = item.buttonColor || '#072B5A';
+    const itemDescription = String(item.description || '');
+    const detectedVersion = getVersionFromDescription(itemDescription);
+    const versionColor = detectedVersion ? getVersionColor(detectedVersion) : undefined;
+    const buttonColor = versionColor || item.buttonColor || '#072B5A';
     
     return (
       <div className="p-6 transition-all duration-200 animate-fade-in h-full bg-white rounded-lg shadow-sm border border-border">
@@ -1157,12 +1178,6 @@ const MenuPage = () => {
                 </label>
                 <div className="flex flex-wrap gap-1.5">
                   {availableVersions.map((version) => {
-                    const getVersionColor = (v: string) => {
-                      if (v.includes('Diario de Centroamérica')) return '#0075bf';
-                      if (v.includes('Contraloría General de Cuentas')) return '#0075bf';
-                      if (v.includes('Arte Final')) return '#878787';
-                      return undefined;
-                    };
                     const color = getVersionColor(version);
                     const isSelected = selectedVersion === version;
                     return (
