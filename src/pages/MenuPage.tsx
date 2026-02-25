@@ -1156,21 +1156,30 @@ const MenuPage = () => {
                   Filtrar por versión:
                 </label>
                 <div className="flex flex-wrap gap-1.5">
-                  {availableVersions.map((version) => (
-                    <Button
-                      key={version}
-                      variant={selectedVersion === version ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setSelectedVersion(version)}
-                      className={`h-8 px-3 text-xs font-medium transition-all duration-200 ${
-                        selectedVersion === version 
-                          ? 'shadow-sm bg-primary text-primary-foreground' 
-                          : 'hover:bg-muted'
-                      }`}
-                    >
-                      {version}
-                    </Button>
-                  ))}
+                  {availableVersions.map((version) => {
+                    const getVersionColor = (v: string) => {
+                      if (v.includes('Diario de Centroamérica')) return '#0075bf';
+                      if (v.includes('Contraloría General de Cuentas')) return '#0075bf';
+                      if (v.includes('Arte Final')) return '#878787';
+                      return undefined;
+                    };
+                    const color = getVersionColor(version);
+                    const isSelected = selectedVersion === version;
+                    return (
+                      <Button
+                        key={version}
+                        variant={isSelected ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setSelectedVersion(version)}
+                        className={`h-8 px-3 text-xs font-medium transition-all duration-200 ${
+                          isSelected ? 'shadow-sm text-white' : 'hover:bg-muted'
+                        }`}
+                        style={isSelected && color ? { backgroundColor: color, borderColor: color } : undefined}
+                      >
+                        {version}
+                      </Button>
+                    );
+                  })}
                 </div>
               </div>
             )}

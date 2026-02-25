@@ -1,46 +1,43 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, Download, ZoomIn, ZoomOut, RotateCw, RotateCcw, Maximize2, Minimize2, Eye, FileText, ExternalLink, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Eye, FileText, AlertTriangle, Loader2, ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { secureDownloadPDF, sanitizeFilename } from '@/utils/secureDownload';
-import { toast } from 'sonner';
+import { GlobalWorkerOptions, getDocument } from 'pdfjs-dist';
+// @ts-ignore
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 
-/**
- * Página dedicada para visualizar PDFs
- * Incluye controles de zoom, rotación, descarga y navegación
- */
+// Configurar worker local (sin consultas externas)
+(GlobalWorkerOptions as any).workerSrc = pdfjsWorker as any;
+
 const PDFViewerPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  
-  // Obtener parámetros de la URL
+
   const pdfUrl = searchParams.get('url') || '';
   const title = searchParams.get('title') || 'Documento PDF';
   const returnPath = searchParams.get('return') || '/';
   const scrollPosition = parseInt(searchParams.get('scroll') || '0');
 
-  // Estados para controles del PDF
-  const [zoom, setZoom] = useState(1);
-  const [rotation, setRotation] = useState(0);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [viewMethod, setViewMethod] = useState<'iframe' | 'google' | 'direct'>('google');
+  const [loading, setLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [zoom, setZoom] = useState(1);
+  const [pageImage, setPageImage] = useState<string | null>(null);
 
-  // Restaurar posición de scroll al regresar
+  const pdfDocRef = useRef<any>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     return () => {
       if (scrollPosition > 0) {
-        setTimeout(() => {
-          window.scrollTo({ top: scrollPosition, behavior: 'smooth' });
-        }, 100);
+        setTimeout(() => window.scrollTo({ top: scrollPosition, behavior: 'smooth' }), 100);
       }
     };
   }, [scrollPosition]);
 
   const handleBack = () => {
-    // Si hay historial previo, regresar a la página anterior
-    // Si no hay historial (acceso directo), ir al returnPath o home
     if (window.history.length > 1 && returnPath !== '/') {
       navigate(-1);
     } else {
@@ -48,68 +45,81 @@ const PDFViewerPage = () => {
     }
   };
 
-  const handleDownload = async () => {
+  // Renderizar una página específica a imagen
+  const renderPage = useCallback(async (pageNum: number, scale: number) => {
+    const pdf = pdfDocRef.current;
+    if (!pdf) return;
     try {
-      await secureDownloadPDF({
-        url: pdfUrl,
-        filename: sanitizeFilename(title),
-        onError: (error) => {
-          console.error('[PDFViewerPage] Error descargando:', error);
-          toast.error('No se pudo descargar el PDF. Por favor, inténtelo de nuevo.');
+      const page = await pdf.getPage(pageNum);
+      const baseViewport = page.getViewport({ scale: 1 });
+      const containerWidth = containerRef.current?.clientWidth || 900;
+      const baseScale = Math.min((containerWidth - 40) / baseViewport.width, 2);
+      const viewport = page.getViewport({ scale: baseScale * scale });
+
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+
+      if (context) {
+        await page.render({ canvasContext: context, viewport } as any).promise;
+        setPageImage(canvas.toDataURL('image/png'));
+      }
+    } catch (e) {
+      console.error('[PDFViewer] Error renderizando página', e);
+    }
+  }, []);
+
+  // Cargar PDF
+  useEffect(() => {
+    if (!pdfUrl) return;
+    let cancelled = false;
+
+    const loadPDF = async () => {
+      try {
+        setLoading(true);
+        setHasError(false);
+        const loadingTask = getDocument({
+          url: pdfUrl,
+          disableAutoFetch: false,
+          disableStream: false,
+          rangeChunkSize: 65536 * 4,
+        });
+        const pdf = await loadingTask.promise;
+        if (cancelled) return;
+        pdfDocRef.current = pdf;
+        setTotalPages(pdf.numPages);
+        setCurrentPage(1);
+        await renderPage(1, 1);
+        if (!cancelled) setLoading(false);
+      } catch (e) {
+        if (!cancelled) {
+          console.error('[PDFViewer] Error al cargar PDF', e);
+          setHasError(true);
+          setLoading(false);
         }
-      });
-      toast.success('Descarga iniciada correctamente');
-    } catch (error) {
-      console.error('[PDFViewerPage] Error:', error);
+      }
+    };
+    loadPDF();
+    return () => { cancelled = true; };
+  }, [pdfUrl, renderPage]);
+
+  // Re-renderizar al cambiar página o zoom
+  useEffect(() => {
+    if (pdfDocRef.current && !loading) {
+      renderPage(currentPage, zoom);
     }
+  }, [currentPage, zoom, renderPage, loading]);
+
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= totalPages) setCurrentPage(page);
   };
 
-  const handleOpenDirect = () => {
-    window.open(pdfUrl, '_blank');
-  };
-
-  const handleZoomIn = () => {
-    setZoom(prev => Math.min(prev + 0.25, 3));
-  };
-
-  const handleZoomOut = () => {
-    setZoom(prev => Math.max(prev - 0.25, 0.5));
-  };
-
-  const handleRotateLeft = () => {
-    setRotation(prev => prev - 90);
-  };
-
-  const handleRotateRight = () => {
-    setRotation(prev => prev + 90);
-  };
-
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
-      setIsFullscreen(true);
-    } else {
-      document.exitFullscreen();
-      setIsFullscreen(false);
-    }
-  };
-
-  const handleIframeError = () => {
-    console.log('Error cargando iframe, intentando con Google Docs Viewer');
-    setHasError(true);
-  };
-
-  // URLs para diferentes métodos de visualización
-  const getViewerUrl = () => {
-    switch (viewMethod) {
-      case 'google':
-        return `https://docs.google.com/viewer?url=${encodeURIComponent(pdfUrl)}&embedded=true`;
-      case 'direct':
-        return pdfUrl;
-      default:
-        return pdfUrl;
-    }
-  };
+  // Bloquear clic derecho en el contenedor del PDF
+  const handleContextMenu = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    return false;
+  }, []);
 
   if (!pdfUrl) {
     return (
@@ -128,11 +138,12 @@ const PDFViewerPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background animate-fade-in">
-      {/* Header con controles */}
+    <div className="min-h-screen bg-background animate-fade-in flex flex-col select-none" onContextMenu={handleContextMenu}>
+      {/* Header */}
       <header className="bg-background/95 backdrop-blur-lg border-b border-border sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-2 sm:py-4">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-2 sm:py-3">
           <div className="flex items-center justify-between gap-2">
+            {/* Izquierda: regresar + título */}
             <div className="flex items-center gap-2 min-w-0 flex-1">
               <Button
                 variant="outline"
@@ -147,102 +158,32 @@ const PDFViewerPage = () => {
                 <div className="p-1.5 sm:p-2 bg-primary/10 rounded-lg shrink-0">
                   <Eye className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                 </div>
-                <div className="min-w-0">
-                  <h1 className="text-sm sm:text-lg font-semibold text-foreground line-clamp-1">
-                    {title}
-                  </h1>
-                  <p className="text-xs sm:text-sm text-muted-foreground hidden sm:block">
-                    Visualizador de documentos PDF
-                  </p>
-                </div>
+                <h1 className="text-sm sm:text-lg font-semibold text-foreground line-clamp-1">
+                  {title}
+                </h1>
               </div>
             </div>
 
-            {/* Controles del PDF */}
+            {/* Derecha: controles de navegación y zoom */}
             <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-              {!hasError && (
-                <>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={handleZoomOut}
-                    disabled={zoom <= 0.5}
-                    className="hover:bg-accent h-8 w-8"
-                  >
-                    <ZoomOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                  </Button>
-                  
-                  <span className="text-xs sm:text-sm text-muted-foreground px-1.5 sm:px-2 py-0.5 sm:py-1 bg-muted rounded hidden xs:inline-block">
-                    {Math.round(zoom * 100)}%
-                  </span>
-                  
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={handleZoomIn}
-                    disabled={zoom >= 3}
-                    className="hover:bg-accent h-8 w-8"
-                  >
-                    <ZoomIn className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                  </Button>
-
-                  <div className="w-px h-4 sm:h-6 bg-border mx-0.5 sm:mx-2 hidden sm:block"></div>
-
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={handleRotateLeft}
-                    className="hover:bg-accent h-8 w-8 hidden xs:flex"
-                  >
-                    <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                  </Button>
-                  
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={handleRotateRight}
-                    className="hover:bg-accent h-8 w-8 hidden xs:flex"
-                  >
-                    <RotateCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                  </Button>
-
-                  <div className="w-px h-4 sm:h-6 bg-border mx-0.5 sm:mx-2 hidden sm:block"></div>
-
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={toggleFullscreen}
-                    className="hover:bg-accent h-8 w-8 hidden md:flex"
-                  >
-                    {isFullscreen ? (
-                      <Minimize2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                    ) : (
-                      <Maximize2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                    )}
-                  </Button>
-
-                  <div className="w-px h-4 sm:h-6 bg-border mx-0.5 sm:mx-2 hidden md:block"></div>
-                </>
-              )}
-
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={handleOpenDirect}
-                className="hover:bg-accent h-8 w-8 sm:h-9 sm:w-auto sm:px-3"
-              >
-                <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                <span className="hidden sm:inline ml-2">Abrir</span>
+              <Button variant="outline" size="icon" onClick={() => goToPage(currentPage - 1)} disabled={currentPage <= 1} className="h-8 w-8">
+                <ChevronLeft className="w-4 h-4" />
+              </Button>
+              <span className="text-xs sm:text-sm text-muted-foreground px-1.5 py-0.5 bg-muted rounded whitespace-nowrap">
+                {currentPage} / {totalPages}
+              </span>
+              <Button variant="outline" size="icon" onClick={() => goToPage(currentPage + 1)} disabled={currentPage >= totalPages} className="h-8 w-8">
+                <ChevronRight className="w-4 h-4" />
               </Button>
 
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={handleDownload}
-                className="hover:bg-accent h-8 w-8 sm:h-9 sm:w-auto sm:px-3"
-              >
-                <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                <span className="hidden sm:inline ml-2">Descargar</span>
+              <div className="w-px h-4 bg-border mx-1 hidden sm:block" />
+
+              <Button variant="outline" size="icon" onClick={() => setZoom(z => Math.max(z - 0.25, 0.5))} disabled={zoom <= 0.5} className="h-8 w-8">
+                <ZoomOut className="w-4 h-4" />
+              </Button>
+              <span className="text-xs text-muted-foreground px-1 hidden sm:inline">{Math.round(zoom * 100)}%</span>
+              <Button variant="outline" size="icon" onClick={() => setZoom(z => Math.min(z + 0.25, 3))} disabled={zoom >= 3} className="h-8 w-8">
+                <ZoomIn className="w-4 h-4" />
               </Button>
             </div>
           </div>
@@ -250,60 +191,41 @@ const PDFViewerPage = () => {
       </header>
 
       {/* Contenedor del PDF */}
-      <main className="flex-1 p-6">
-        <div className="max-w-5xl mx-auto">
-          {hasError ? (
-            // Mostrar opciones alternativas cuando hay error
-            <div className="bg-card border border-border rounded-lg shadow-lg p-8 text-center animate-scale-in">
-              <AlertTriangle className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-foreground mb-4">
-                No se puede mostrar el PDF
-              </h2>
-              <p className="text-muted-foreground mb-6">
-                El servidor no permite mostrar este documento incrustado por razones de seguridad.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button onClick={handleOpenDirect} className="bg-primary hover:bg-primary/90">
-                  <ExternalLink className="w-4 h-4 mr-2" />
-                  Abrir en Nueva Ventana
-                </Button>
-                <Button onClick={handleDownload} variant="outline">
-                  <Download className="w-4 h-4 mr-2" />
-                  Descargar PDF
-                </Button>
-                <Button 
-                  onClick={() => {
-                    setViewMethod('google');
-                    setHasError(false);
-                  }} 
-                  variant="outline"
-                >
-                  Intentar con Google Viewer
-                </Button>
-              </div>
+      <main ref={containerRef} className="flex-1 flex items-start justify-center overflow-auto bg-muted/30 p-4">
+        {loading && (
+          <div className="flex items-center justify-center py-20">
+            <div className="text-center">
+              <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">Cargando documento...</p>
             </div>
-          ) : (
-            // Mostrar PDF
-            <div className="bg-card border border-border rounded-lg shadow-lg overflow-hidden animate-scale-in">
-              <div 
-                className="pdf-container transition-transform duration-300 ease-in-out"
-                style={{
-                  transform: `scale(${zoom}) rotate(${rotation}deg)`,
-                  transformOrigin: 'center center'
-                }}
-              >
-                <iframe
-                  src={getViewerUrl()}
-                  title={title}
-                  className="w-full h-[calc(100vh-180px)] border-0"
-                  style={{ minHeight: '600px' }}
-                  onError={handleIframeError}
-                  sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
-                />
-              </div>
+          </div>
+        )}
+
+        {hasError && !loading && (
+          <div className="flex items-center justify-center py-20">
+            <div className="bg-card border border-border rounded-lg shadow-lg p-8 text-center max-w-md">
+              <AlertTriangle className="w-16 h-16 text-destructive mx-auto mb-4" />
+              <h2 className="text-2xl font-bold text-foreground mb-4">No se puede mostrar el PDF</h2>
+              <p className="text-muted-foreground mb-6">Ocurrió un error al cargar el documento.</p>
+              <Button onClick={handleBack} variant="outline">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Regresar
+              </Button>
             </div>
-          )}
-        </div>
+          </div>
+        )}
+
+        {!loading && !hasError && pageImage && (
+          <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+            <img
+              src={pageImage}
+              alt={`Página ${currentPage}`}
+              className="max-w-full h-auto pointer-events-none"
+              draggable={false}
+              style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
+            />
+          </div>
+        )}
       </main>
     </div>
   );
