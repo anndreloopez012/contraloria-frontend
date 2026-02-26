@@ -475,11 +475,6 @@ const MenuPage = () => {
           <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary transition-colors duration-200">
             {String(item.title || '')}
           </h3>
-          <img 
-            src="/lovable-uploads/61d9626e-e3c2-4b14-b4e7-7069de2e0ecc.png" 
-            alt="Decorative border" 
-            className="w-full h-2 object-cover mb-4"
-          />
           
           {/* Imagen del PDF centrada debajo del título */}
           {item.pdfImage && (
@@ -731,11 +726,6 @@ const MenuPage = () => {
           <h3 className="text-lg font-semibold text-foreground mb-2">
             {String(item.title || '')}
           </h3>
-          <img 
-            src="/lovable-uploads/61d9626e-e3c2-4b14-b4e7-7069de2e0ecc.png" 
-            alt="Decorative border" 
-            className="w-full h-2 object-cover mb-4"
-          />
         </div>
 
         <div className="relative mb-6">
@@ -923,11 +913,6 @@ const MenuPage = () => {
           <h3 className="text-lg font-semibold text-foreground mb-2">
             {String(item.title || '')}
           </h3>
-          <img 
-            src="/lovable-uploads/61d9626e-e3c2-4b14-b4e7-7069de2e0ecc.png" 
-            alt="Decorative border" 
-            className="w-full h-2 object-cover mb-4"
-          />
         </div>
 
         <div className="mb-6">
@@ -970,11 +955,6 @@ const MenuPage = () => {
           <h3 className="text-lg font-semibold text-foreground mb-2">
             {String(item.title || '')}
           </h3>
-          <img 
-            src="/lovable-uploads/61d9626e-e3c2-4b14-b4e7-7069de2e0ecc.png" 
-            alt="Decorative border" 
-            className="w-full h-2 object-cover mb-4"
-          />
         </div>
 
         {item.mediaImage && (
@@ -1026,11 +1006,6 @@ const MenuPage = () => {
           <h3 className="text-lg font-semibold text-foreground mb-2">
             {String(item.title || '')}
           </h3>
-          <img 
-            src="/lovable-uploads/61d9626e-e3c2-4b14-b4e7-7069de2e0ecc.png" 
-            alt="Decorative border" 
-            className="w-full h-2 object-cover mb-4"
-          />
         </div>
 
         {item.description && (
