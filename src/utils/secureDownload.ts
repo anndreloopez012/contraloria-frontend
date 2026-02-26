@@ -9,20 +9,54 @@ interface DownloadOptions {
   onError?: (error: Error) => void;
 }
 
+const CONTENT_TYPE_EXTENSION_MAP: Record<string, string> = {
+  'application/pdf': '.pdf',
+  'application/msword': '.doc',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '.docx',
+  'application/vnd.ms-excel': '.xls',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': '.xlsx',
+  'application/vnd.ms-powerpoint': '.ppt',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation': '.pptx',
+  'text/plain': '.txt',
+  'text/csv': '.csv',
+  'application/zip': '.zip',
+  'application/json': '.json',
+  'image/jpeg': '.jpg',
+  'image/png': '.png',
+  'image/webp': '.webp',
+  'audio/mpeg': '.mp3',
+  'video/mp4': '.mp4'
+};
+
+const hasFileExtension = (value: string): boolean => /\.[a-zA-Z0-9]{1,10}$/.test(value);
+
+const getExtensionFromUrl = (url: string): string => {
+  try {
+    const pathname = new URL(url, window.location.origin).pathname;
+    const match = pathname.match(/\.([a-zA-Z0-9]{1,10})$/);
+    return match ? `.${match[1].toLowerCase()}` : '';
+  } catch {
+    return '';
+  }
+};
+
+const getExtensionFromContentType = (contentType: string | null): string => {
+  if (!contentType) return '';
+  const normalizedType = contentType.split(';')[0].trim().toLowerCase();
+  return CONTENT_TYPE_EXTENSION_MAP[normalizedType] || '';
+};
+
 /**
  * Descarga un archivo de forma segura usando fetch y blob
  * Esto evita exponer la URL original del archivo
  */
 export const secureDownloadPDF = async ({ url, filename, onError }: DownloadOptions): Promise<void> => {
   try {
-    // Asegurar que el filename tenga extensión .pdf
-    const finalFilename = filename.endsWith('.pdf') ? filename : `${filename}.pdf`;
-    
     // Fetch con headers para evitar CORS y mantener privacidad
     const response = await fetch(url, {
       method: 'GET',
       headers: {
-        'Accept': 'application/pdf',
+        'Accept': '*/*',
       },
       credentials: 'omit', // No enviar cookies para mayor privacidad
     });
@@ -30,6 +64,9 @@ export const secureDownloadPDF = async ({ url, filename, onError }: DownloadOpti
     if (!response.ok) {
       throw new Error(`Error al descargar: ${response.status} ${response.statusText}`);
     }
+
+    const extensionFromFilename = hasFileExtension(filename) ? '' : getExtensionFromUrl(url) || getExtensionFromContentType(response.headers.get('content-type'));
+    const finalFilename = `${filename}${extensionFromFilename}`;
 
     // Convertir a blob
     const blob = await response.blob();
