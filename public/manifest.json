@@ -3,7 +3,7 @@
   "name": "Contraloría General de Cuentas",
   "short_name": "CGC Guatemala",
   "description": "Portal oficial de la Contraloría General de Cuentas de Guatemala",
-  "theme_color": "#2563eb",
+  "theme_color": "#000000",
   "background_color": "#ffffff",
   "display": "standalone",
   "orientation": "portrait",

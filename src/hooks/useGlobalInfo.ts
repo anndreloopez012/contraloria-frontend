@@ -36,6 +36,25 @@ export const useGlobalInfo = () => {
     Object.entries(attrs).forEach(([k, v]) => el!.setAttribute(k, v));
   };
 
+  const resolveThemeColor = (info: GlobalInfo): string => {
+    // Intentar color desde API global si existe (campo opcional no tipado)
+    const apiColor = (info as GlobalInfo & { themeColor?: string }).themeColor;
+    if (apiColor && typeof apiColor === 'string' && apiColor.trim()) {
+      return apiColor.trim();
+    }
+
+    // Fallback al color primario del sistema (CSS variable)
+    if (typeof window !== 'undefined') {
+      const primary = getComputedStyle(document.documentElement)
+        .getPropertyValue('--primary')
+        .trim();
+      if (primary) return `hsl(${primary})`;
+    }
+
+    // Fallback final: negro (evita barra roja en PWA)
+    return '#000000';
+  };
+
   const updateManifestDynamic = (info: GlobalInfo) => {
     if (typeof document === 'undefined') return;
 
@@ -58,11 +77,13 @@ export const useGlobalInfo = () => {
       info.favicon?.url ||
       '';
 
+    const themeColor = resolveThemeColor(info);
+
     const manifest = {
       name: info.defaultSeo.metaTitle || info.siteName,
       short_name: (info.siteName || 'CGC').slice(0, 30),
       description: info.siteDescription || info.defaultSeo.metaDescription || '',
-      theme_color: '#2563eb',
+      theme_color: themeColor,
       background_color: '#ffffff',
       display: 'standalone',
       orientation: 'portrait',
@@ -97,6 +118,7 @@ export const useGlobalInfo = () => {
 
   const applyHead = (info: GlobalInfo) => {
     if (typeof document === 'undefined') return;
+    const themeColor = resolveThemeColor(info);
 
     // Title SEO
     document.title = info.defaultSeo.metaTitle || info.siteName || document.title;
@@ -113,6 +135,9 @@ export const useGlobalInfo = () => {
     upsertMeta('og:description', description);
     upsertMeta('twitter:title', info.defaultSeo.metaTitle || info.siteName);
     upsertMeta('twitter:description', description);
+    upsertMeta('theme-color', themeColor);
+    upsertMeta('msapplication-TileColor', themeColor);
+    upsertMeta('apple-mobile-web-app-status-bar-style', 'black-translucent');
 
     // Favicons
     const iconSmall = info.favicon?.formats?.thumbnail || info.favicon?.formats?.small || info.favicon?.url;

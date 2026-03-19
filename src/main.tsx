@@ -9,6 +9,9 @@ installSafeConsoleFilter()
 
 // Suppress Facebook SDK errors globally
 window.addEventListener('error', (event) => {
+  const message = event.message || '';
+  const source = event.filename || '';
+
   if (event.message && (
     event.message.includes('Could not find element') ||
     event.message.includes('fburl.com') ||
@@ -18,7 +21,25 @@ window.addEventListener('error', (event) => {
     event.stopPropagation();
     return false;
   }
+
+  // Ignore technical PWA registration errors from user-facing notifications
+  if (message.toLowerCase().includes('sw.js') || source.toLowerCase().includes('sw.js')) {
+    event.preventDefault();
+    event.stopPropagation();
+    return false;
+  }
 }, true);
+
+window.addEventListener('unhandledrejection', (event) => {
+  const reasonText =
+    typeof event.reason === 'string'
+      ? event.reason
+      : (event.reason?.message || '');
+
+  if (String(reasonText).toLowerCase().includes('sw.js')) {
+    event.preventDefault();
+  }
+});
 
 // Disable right-click and context menu based on configuration
 if (getDisableRightClick()) {

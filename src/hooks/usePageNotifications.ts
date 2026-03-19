@@ -7,6 +7,31 @@ const STORAGE_KEY = 'seen_page_notifications';
 const PAGES_STATE_KEY = 'pages_state';
 const POLL_INTERVAL = 60000; // 1 minuto
 
+const TECHNICAL_NOTIFICATION_PATTERNS = [
+  'error',
+  'promise',
+  'rechazada',
+  'rejected',
+  'script',
+  'failed',
+  'sw.js',
+  'stack',
+  'exception',
+  'sistema inicializado',
+];
+
+const isUserFacingPageNotification = (page: PageData): boolean => {
+  const title = String(page.title || '').trim();
+  const slug = String(page.slug?.route || '').trim();
+  const normalizedTitle = title.toLowerCase();
+
+  if (!title || !slug) return false;
+
+  return !TECHNICAL_NOTIFICATION_PATTERNS.some((pattern) =>
+    normalizedTitle.includes(pattern)
+  );
+};
+
 /**
  * Hook para manejar notificaciones de cambios en páginas
  */
@@ -97,7 +122,9 @@ export const usePageNotifications = () => {
     const changes: PageNotification[] = [];
     const seenIds = getSeenNotifications();
 
-    currentPages.forEach((page, index) => {
+    currentPages.forEach((page) => {
+      if (!isUserFacingPageNotification(page)) return;
+
       const previous = previousPages.get(page.documentId);
       
       // Página nueva
