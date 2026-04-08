@@ -52,6 +52,13 @@ type PDFDisplayItem =
       primaryItem: ContentItem;
     };
 
+const normalizeVersionComparison = (value: string): string =>
+  value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-zA-Z0-9]/g, '')
+    .toLowerCase();
+
 const MenuPage = () => {
   const { section } = useParams<{ section: string }>();
   const navigate = useNavigate();
@@ -245,7 +252,10 @@ const MenuPage = () => {
   };
 
   const getVersionFromDescription = (description: string): KnownPDFVersion | null => {
-    const matchedVersion = KNOWN_PDF_VERSIONS.find(version => description.includes(version));
+    const normalizedDescription = normalizeVersionComparison(description);
+    const matchedVersion = KNOWN_PDF_VERSIONS.find(
+      version => normalizedDescription.includes(normalizeVersionComparison(version))
+    );
     return matchedVersion || null;
   };
 
