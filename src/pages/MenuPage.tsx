@@ -246,7 +246,7 @@ const MenuPage = () => {
 
   const getVersionColor = (version: string): string | undefined => {
     if (version.includes('Diario de Centroamérica')) return '#0075bf';
-    if (version.includes('Contraloría General de Cuentas')) return '#0075bf';
+    if (version.includes('Contraloría General de Cuentas')) return '#102d69';
     if (version.includes('Arte Final')) return '#878787';
     return undefined;
   };
