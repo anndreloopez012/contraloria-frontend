@@ -34,6 +34,24 @@ const extractSlugFromPath = (section: string | undefined): string => {
   return slug;
 };
 
+const KNOWN_PDF_VERSIONS = [
+  'Versión Contraloría General de Cuentas',
+  'Versión Arte Final',
+  'Versión Diario de Centroamérica'
+] as const;
+
+type KnownPDFVersion = typeof KNOWN_PDF_VERSIONS[number];
+
+type PDFDisplayItem =
+  | { kind: 'single'; item: ContentItem }
+  | {
+      kind: 'group';
+      key: string;
+      title: string;
+      versions: Array<{ version: KnownPDFVersion; item: ContentItem }>;
+      primaryItem: ContentItem;
+    };
+
 const MenuPage = () => {
   const { section } = useParams<{ section: string }>();
   const navigate = useNavigate();
@@ -41,7 +59,6 @@ const MenuPage = () => {
   
   // Estados principales
   const [selectedCategory, setSelectedCategory] = useState('Todos');
-  const [selectedVersion, setSelectedVersion] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [pageContent, setPageContent] = useState<PageContent | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -220,29 +237,6 @@ const MenuPage = () => {
 
   const pdfCategories = ['Todos', ...getAllPDFCategories()];
 
-  // Detectar versiones disponibles en los PDFs basándose en las descripciones
-  const detectPDFVersions = (): string[] => {
-    const versions = new Set<string>();
-    const versionKeywords = [
-      'Versión Contraloría General de Cuentas',
-      'Versión Arte Final',
-      'Versión Diario de Centroamérica'
-    ];
-
-    pdfContent.forEach(item => {
-      const description = String(item.description || '');
-      versionKeywords.forEach(version => {
-        if (description.includes(version)) {
-          versions.add(version);
-        }
-      });
-    });
-
-    return Array.from(versions);
-  };
-
-  const availableVersions = detectPDFVersions();
-
   const getVersionColor = (version: string): string | undefined => {
     if (version.includes('Diario de Centroamérica')) return '#0075bf';
     if (version.includes('Contraloría General de Cuentas')) return '#0075bf';
@@ -250,32 +244,10 @@ const MenuPage = () => {
     return undefined;
   };
 
-  const getVersionFromDescription = (description: string): string | null => {
-    const knownVersions = [
-      'Versión Contraloría General de Cuentas',
-      'Versión Arte Final',
-      'Versión Diario de Centroamérica'
-    ];
-
-    const matchedVersion = knownVersions.find(version => description.includes(version));
+  const getVersionFromDescription = (description: string): KnownPDFVersion | null => {
+    const matchedVersion = KNOWN_PDF_VERSIONS.find(version => description.includes(version));
     return matchedVersion || null;
   };
-
-  // Establecer versión por defecto cuando se detectan versiones
-  useEffect(() => {
-    if (availableVersions.length > 0 && selectedVersion === null) {
-      // Si existe "Versión Contraloría General de Cuentas", usarla como predeterminada
-      if (availableVersions.includes('Versión Contraloría General de Cuentas')) {
-        setSelectedVersion('Versión Contraloría General de Cuentas');
-      } else {
-        // Si no, usar la primera versión disponible
-        setSelectedVersion(availableVersions[0]);
-      }
-    } else if (availableVersions.length === 0 && selectedVersion !== null) {
-      // Si no hay versiones disponibles, resetear
-      setSelectedVersion(null);
-    }
-  }, [availableVersions.length, pdfContent.length]);
 
   const filteredPdfContent = pdfContent.filter(item => {
     if (!item || typeof item !== 'object') return false;
@@ -287,17 +259,80 @@ const MenuPage = () => {
     const matchesCategory = selectedCategory === 'Todos' || 
                            itemCategories.includes(selectedCategory);
     
-    // Verificar si coincide con la versión seleccionada (si hay versiones disponibles)
-    const description = String(item.description || '');
-    const matchesVersion = !selectedVersion || description.includes(selectedVersion);
-    
     // Verificar si coincide con el término de búsqueda
+    const description = String(item.description || '');
     const title = String(item.title || '');
     const matchesSearch = title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          description.toLowerCase().includes(searchTerm.toLowerCase());
     
-    return matchesCategory && matchesVersion && matchesSearch;
+    return matchesCategory && matchesSearch;
   });
+
+  const pdfDisplayItems: PDFDisplayItem[] = (() => {
+    const itemsByTitle = new Map<string, ContentItem[]>();
+    const titleOrder: string[] = [];
+
+    filteredPdfContent.forEach(item => {
+      const normalizedTitle = String(item.title || '').trim().toLowerCase();
+
+      if (!itemsByTitle.has(normalizedTitle)) {
+        itemsByTitle.set(normalizedTitle, []);
+        titleOrder.push(normalizedTitle);
+      }
+
+      itemsByTitle.get(normalizedTitle)!.push(item);
+    });
+
+    return titleOrder.flatMap((titleKey) => {
+      const titleItems = itemsByTitle.get(titleKey) || [];
+      const recognizedVersions = new Map<KnownPDFVersion, ContentItem>();
+      const duplicateVersionItems: ContentItem[] = [];
+      const regularItems: ContentItem[] = [];
+
+      titleItems.forEach(item => {
+        const version = getVersionFromDescription(String(item.description || ''));
+
+        if (!version) {
+          regularItems.push(item);
+          return;
+        }
+
+        if (recognizedVersions.has(version)) {
+          duplicateVersionItems.push(item);
+          return;
+        }
+
+        recognizedVersions.set(version, item);
+      });
+
+      const shouldGroup = titleItems.length > 1 && recognizedVersions.size > 0;
+
+      if (!shouldGroup) {
+        return titleItems.map(item => ({ kind: 'single', item }) satisfies PDFDisplayItem);
+      }
+
+      const orderedVersions = KNOWN_PDF_VERSIONS
+        .filter(version => recognizedVersions.has(version))
+        .map(version => ({
+          version,
+          item: recognizedVersions.get(version)!
+        }));
+
+      const primaryItem = orderedVersions[0]?.item || titleItems[0];
+
+      return [
+        {
+          kind: 'group',
+          key: `${titleKey}-group`,
+          title: String(primaryItem.title || ''),
+          versions: orderedVersions,
+          primaryItem
+        } satisfies PDFDisplayItem,
+        ...duplicateVersionItems.map(item => ({ kind: 'single', item }) satisfies PDFDisplayItem),
+        ...regularItems.map(item => ({ kind: 'single', item }) satisfies PDFDisplayItem)
+      ];
+    });
+  })();
 
   const filteredNonPdfContent = nonPdfContent.filter(item => item && typeof item === 'object');
 
@@ -531,6 +566,105 @@ const MenuPage = () => {
           >
             <Download className="w-4 h-4" />
           </Button>
+        </div>
+      </div>
+    );
+  };
+
+  const renderGroupedPDFContent = (group: Extract<PDFDisplayItem, { kind: 'group' }>) => {
+    const primaryItem = group.primaryItem;
+    const itemCategories = extractCategoriesFromPDF(primaryItem);
+
+    return (
+      <div className="p-6 transition-all duration-200 animate-fade-in h-full bg-white rounded-lg shadow-sm border border-border">
+        {primaryItem.thumbnail && (
+          <div className="relative h-48 w-full overflow-hidden group mb-4 rounded-lg">
+            <img
+              src={String(primaryItem.thumbnail)}
+              alt={group.title}
+              className="w-full h-full object-cover transition-all duration-300 group-hover:brightness-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+
+            <div className="absolute top-3 left-3">
+              <span className="px-2 py-1 bg-gray-800 text-white text-xs font-medium rounded">
+                {String(primaryItem.subtype || 'PDF')}
+              </span>
+            </div>
+
+            {primaryItem.size && (
+              <div className="absolute top-3 right-3">
+                <span className="px-2 py-1 bg-white text-gray-700 text-xs rounded">
+                  {String(primaryItem.size)}
+                </span>
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary transition-colors duration-200">
+            {group.title}
+          </h3>
+
+          {primaryItem.pdfImage && (
+            <div className="flex justify-center mb-4">
+              <img
+                src={primaryItem.pdfImage}
+                alt={group.title}
+                className="max-w-full h-auto max-h-32 object-contain rounded"
+              />
+            </div>
+          )}
+
+          {primaryItem.description && (
+            <div className="text-sm leading-relaxed mb-4">
+              <ContentRenderer content={String(primaryItem.description)} className="text-sm [&_*]:text-muted-foreground" />
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center justify-between text-xs text-muted-foreground mb-4">
+          {itemCategories.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              {itemCategories.map((category, index) => (
+                <span
+                  key={index}
+                  className="px-2 py-1 bg-muted text-foreground font-medium rounded text-xs"
+                >
+                  {category}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="text-xs text-muted-foreground mb-4">
+          Actualizado: {String(primaryItem.lastUpdated || '')}
+        </div>
+
+        <div className="flex flex-col gap-3">
+          {group.versions.map(({ version, item }) => (
+            <div key={`${group.key}-${version}`} className="flex gap-3">
+              <Button
+                onClick={() => handleViewPDF(item)}
+                className="flex-1 transition-colors duration-200"
+                style={{ backgroundColor: getVersionColor(version) || item.buttonColor || '#072B5A' }}
+                size="sm"
+              >
+                <Eye className="w-4 h-4 mr-2" />
+                {version}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => handleDownloadPDF(item)}
+                size="sm"
+                className="transition-colors duration-200"
+              >
+                <Download className="w-4 h-4" />
+              </Button>
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -1145,35 +1279,6 @@ const MenuPage = () => {
               />
             </div>
 
-            {/* Filtros por versión (si existen versiones) */}
-            {availableVersions.length > 0 && (
-              <div className="mb-3">
-                <label className="text-xs font-semibold text-foreground mb-2 block">
-                  Filtrar por versión:
-                </label>
-                <div className="flex flex-wrap gap-1.5">
-                  {availableVersions.map((version) => {
-                    const color = getVersionColor(version);
-                    const isSelected = selectedVersion === version;
-                    return (
-                      <Button
-                        key={version}
-                        variant={isSelected ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setSelectedVersion(version)}
-                        className={`h-8 px-3 text-xs font-medium transition-all duration-200 ${
-                          isSelected ? 'shadow-sm text-white' : 'hover:bg-muted'
-                        }`}
-                        style={isSelected && color ? { backgroundColor: color, borderColor: color } : undefined}
-                      >
-                        {version}
-                      </Button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
             {/* Filtros por categoría */}
             <div>
               <label className="text-xs font-semibold text-foreground mb-2 block">
@@ -1201,17 +1306,28 @@ const MenuPage = () => {
         )}
 
         {/* CONTENIDO PDF CON FLEXBOX CENTRADO (SOLO SI HAY MÚLTIPLES PDFs) */}
-        {pdfContent.length > 1 && filteredPdfContent.length > 0 && (
+        {pdfContent.length > 1 && pdfDisplayItems.length > 0 && (
           <div className="flex flex-wrap justify-center items-start gap-6 w-full animate-fade-in" style={{ animationDelay: '500ms' }}>
-            {filteredPdfContent.map((item) => {
-              if (!item || typeof item !== 'object') return null;
-              
+            {pdfDisplayItems.map((entry) => {
+              if (entry.kind === 'group') {
+                return (
+                  <div
+                    key={entry.key}
+                    className={`${getFlexWidthClass(Number(entry.primaryItem.col) || 12)} animate-fade-in`}
+                  >
+                    {renderGroupedPDFContent(entry)}
+                  </div>
+                );
+              }
+
+              if (!entry.item || typeof entry.item !== 'object') return null;
+
               return (
-                <div 
-                  key={String(item.id)} 
-                  className={`${getFlexWidthClass(Number(item.col) || 12)} animate-fade-in`}
+                <div
+                  key={String(entry.item.id)}
+                  className={`${getFlexWidthClass(Number(entry.item.col) || 12)} animate-fade-in`}
                 >
-                  {renderPDFContent(item)}
+                  {renderPDFContent(entry.item)}
                 </div>
               );
             })}
@@ -1219,7 +1335,7 @@ const MenuPage = () => {
         )}
 
         {/* Mensaje cuando no hay resultados DE PDFS (SOLO SI HAY MÚLTIPLES PDFs) */}
-        {pdfContent.length > 1 && filteredPdfContent.length === 0 && (
+        {pdfContent.length > 1 && pdfDisplayItems.length === 0 && (
           <div className="text-center py-12 animate-fade-in" style={{ animationDelay: '400ms' }}>
             <div className="bg-muted border-2 border-border rounded-full p-4 w-20 h-20 mx-auto mb-6 flex items-center justify-center">
               <FileText className="w-8 h-8 text-muted-foreground" />
