@@ -18,6 +18,7 @@ export interface MenuItem {
   title: string;
   key: string;
   route?: string;
+  url?: string;
   description?: string;
   color?: string;
   iconColor?: string;

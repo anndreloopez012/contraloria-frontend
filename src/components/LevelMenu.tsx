@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { navigateWithMenuUrl } from '@/utils/menuNavigation';
 
 /**
  * LevelMenu
@@ -70,13 +71,8 @@ const LevelMenu: React.FC = () => {
   const defaultHover = '#F5C842';
 
   const navigateToItem = (item: LevelMenuItem) => {
-    // Prioridad 1: Si hay URL del API, usarla
-    if (item.url) {
-      if (item.blank) {
-        window.open(item.url, '_blank', 'noopener,noreferrer');
-      } else {
-        window.location.href = item.url;
-      }
+    // Prioridad 1: Si hay URL del API, usarla normalizada
+    if (navigateWithMenuUrl(item.url, item.blank, navigate)) {
       return;
     }
     

@@ -91,6 +91,7 @@ const transformStrapiMenuItem = (item: StrapiMenuItem, parentKey?: string): Menu
     title: item.title,
     key: key,
     route,
+    url: item.url || undefined,
     description: item.description || `Información sobre ${item.title}`,
     color: `bg-blue-50/60 border-blue-200/40`,
     iconColor: 'text-blue-600',

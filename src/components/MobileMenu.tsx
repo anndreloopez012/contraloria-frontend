@@ -8,6 +8,7 @@ import SocialMenuItems from './SocialMenuItems';
 import SearchModal from './SearchModal';
 import { useContentAPI } from '@/hooks/useContentAPI';
 import * as LucideIcons from 'lucide-react';
+import { navigateWithMenuUrl } from '@/utils/menuNavigation';
 
 /**
  * Props del componente MobileMenu
@@ -64,6 +65,11 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
   };
 
   const handleItemClick = (item: any, route: string) => {
+    if (navigateWithMenuUrl(item.url, !!item.target_blank, navigate)) {
+      closeMenu();
+      return;
+    }
+
     // Si target_blank es true, redirigir a la página de enlaces
     if (item.target_blank) {
       navigate(`/links/${item.route}`);

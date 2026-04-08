@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react';
 import { useContentAPI } from '@/hooks/useContentAPI';
 import { useNavigate } from 'react-router-dom';
 import * as LucideIcons from 'lucide-react';
+import { navigateWithMenuUrl } from '@/utils/menuNavigation';
 
 interface SimpleMegaMenuProps {
   isOpen: boolean;
@@ -33,6 +34,10 @@ const SimpleMegaMenu: React.FC<SimpleMegaMenuProps> = ({
   };
 
   const handleItemClick = (item: any, route: string) => {
+    if (navigateWithMenuUrl(item.url, !!item.target_blank, navigate)) {
+      return;
+    }
+
     // Si target_blank es true, redirigir a la página de enlaces
     if (item.target_blank) {
       navigate(`/links/${item.route}`);
