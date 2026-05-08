@@ -5,15 +5,21 @@
  * SIN CACHÉ - Los datos se obtienen siempre frescos del servidor
  */
 
-import { getApiHost, getBearerToken, absUrl } from '@/config/apiEnv';
+import { getApiHost, absUrl } from '@/config/apiEnv';
 import logger from '@/utils/logger';
 
 // Configuración del API
 const API_CONFIG = {
   BASE_URL: `${getApiHost()}/api/redactions`,
-  BEARER_TOKEN: getBearerToken(),
   ARTICLES_PAGE_SIZE: 100,
 };
+
+const buildSimpleGetOptions = (): RequestInit => ({
+  method: 'GET',
+  headers: {
+    'Accept': 'application/json',
+  },
+});
 
 // Tipos para los artículos
 export interface ArticleImage {
@@ -154,14 +160,6 @@ interface StrapiArticleDetailResponse {
 export const fetchArticlesList = async (): Promise<Article[]> => {
   try {
     logger.log('🚀 Obteniendo lista FRESCA de artículos');
-    
-    const headers = {
-      'Authorization': `Bearer ${API_CONFIG.BEARER_TOKEN}`,
-      'Content-Type': 'application/json',
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
-      'Pragma': 'no-cache',
-      'Expires': '0'
-    };
 
     const allArticles: StrapiArticlesListResponse['data'] = [];
     let currentPage = 1;
@@ -170,10 +168,7 @@ export const fetchArticlesList = async (): Promise<Article[]> => {
     do {
       const endpoint =
         `${API_CONFIG.BASE_URL}` +
-        `?populate[author][populate]=avatar` +
-        `&populate[category]=*` +
-        `&populate[image]=*` +
-        `&populate[seo]=*` +
+        `?populate=*` +
         `&sort[0]=publishedAt:desc` +
         `&sort[1]=id:desc` +
         `&pagination[page]=${currentPage}` +
@@ -181,10 +176,7 @@ export const fetchArticlesList = async (): Promise<Article[]> => {
 
       logger.log(`📡 Endpoint página ${currentPage}: ${endpoint}`);
 
-      const response = await fetch(endpoint, {
-        method: 'GET',
-        headers,
-      });
+      const response = await fetch(endpoint, buildSimpleGetOptions());
 
       if (!response.ok) {
         throw new Error(`Error ${response.status}: ${response.statusText}`);
@@ -232,16 +224,7 @@ export const fetchArticleBySlug = async (slug: string): Promise<Article | null> 
     logger.log(`🚀 Obteniendo detalle FRESCO de artículo para slug: "${slug}"`);
     logger.log(`📡 Endpoint: ${endpoint}`);
 
-    const response = await fetch(endpoint, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${API_CONFIG.BEARER_TOKEN}`,
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0'
-      },
-    });
+    const response = await fetch(endpoint, buildSimpleGetOptions());
 
     if (!response.ok) {
       throw new Error(`Error ${response.status}: ${response.statusText}`);
