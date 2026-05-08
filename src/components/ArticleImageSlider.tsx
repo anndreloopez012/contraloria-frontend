@@ -14,9 +14,10 @@ interface ArticleImage {
 interface ArticleImageSliderProps {
   images: ArticleImage[];
   title?: string;
+  percentage?: number;
 }
 
-const ArticleImageSlider = ({ images, title }: ArticleImageSliderProps) => {
+const ArticleImageSlider = ({ images, title, percentage = 100 }: ArticleImageSliderProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
@@ -76,10 +77,12 @@ const ArticleImageSlider = ({ images, title }: ArticleImageSliderProps) => {
 
   const currentImage = images[currentIndex];
   const isCurrentImageLoaded = loadedImages.has(currentIndex);
+  const normalizedPercentage = `${Math.min(Math.max(percentage, 1), 100)}%`;
 
   return (
     <div className="w-full bg-white">
-      <div className="relative w-full bg-gray-900 overflow-hidden h-auto min-h-[400px]">
+      <div className="max-w-full mx-auto" style={{ width: normalizedPercentage }}>
+      <div className="relative w-full bg-gray-900/5 overflow-hidden h-auto rounded-lg">
         <div className="relative w-full h-full flex items-center justify-center">
           {!isCurrentImageLoaded && (
             <div className="absolute inset-0 bg-gray-800 animate-pulse flex items-center justify-center">
@@ -89,7 +92,7 @@ const ArticleImageSlider = ({ images, title }: ArticleImageSliderProps) => {
           <img
             src={currentImage.url}
             alt={currentImage.alternativeText || title || `Imagen ${currentIndex + 1}`}
-            className={`w-full h-auto object-contain transition-all duration-500 cursor-default ${
+            className={`block max-w-full w-full h-auto object-contain transition-all duration-500 cursor-default ${
               isCurrentImageLoaded ? 'opacity-100' : 'opacity-0'
             }`}
             loading="lazy"
@@ -145,6 +148,7 @@ const ArticleImageSlider = ({ images, title }: ArticleImageSliderProps) => {
           </>
         )}
 
+      </div>
       </div>
     </div>
   );

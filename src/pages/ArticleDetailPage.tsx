@@ -408,7 +408,7 @@ const ArticleDetailPage = () => {
           </h3>
         </div>
 
-        <ArticleImageSlider images={images} title={block.title} />
+        <ArticleImageSlider images={images} title={block.title} percentage={block.percentage || 100} />
       </div>
     );
   };

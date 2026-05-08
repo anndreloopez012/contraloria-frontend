@@ -90,6 +90,7 @@ interface SharedImageBlock {
   category?: string;
   order: number;
   col: number;
+  percentage?: number;
   // En la respuesta real viene como array
   image: StrapiImage[];
 }
@@ -227,6 +228,7 @@ export interface ContentItem {
   lastUpdated: string;
   order: number;
   col: number;
+  percentage?: number;
   
   // Para PDFs
   url?: string;
@@ -343,6 +345,7 @@ const transformContentBlock = (block: ContentBlock, index: number): ContentItem 
         title: imageBlock.title,
         description: imageBlock.description || '',
         category: imageBlock.category || 'General',
+        percentage: imageBlock.percentage || 100,
         images: images.map(image => ({
           id: image.documentId,
           src: `${SERVER_ORIGIN}${image.url}`,

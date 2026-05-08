@@ -685,6 +685,7 @@ const MenuPage = () => {
     
     const sliderState = getImageSliderState(String(item.id));
     const isMultipleImages = item.images && Array.isArray(item.images) && item.images.length > 1;
+    const normalizedPercentage = `${Math.min(Math.max(Number(item.percentage) || 100, 1), 100)}%`;
     
     if (!item.images || !Array.isArray(item.images) || item.images.length === 0) return null;
 
@@ -696,9 +697,9 @@ const MenuPage = () => {
           </h3>
         </div>
 
-        <div className="relative mb-6">
+        <div className="relative mb-6 max-w-full mx-auto" style={{ width: normalizedPercentage }}>
           {isMultipleImages ? (
-            <div className="relative w-full overflow-hidden rounded-lg">
+            <div className="relative w-full max-w-full overflow-hidden rounded-lg">
               <div 
                 className="flex transition-transform duration-500 ease-in-out"
                 style={{ transform: `translateX(-${sliderState.currentIndex * 100}%)` }}
@@ -708,7 +709,7 @@ const MenuPage = () => {
                     <img
                       src={image.src}
                       alt={image.alt}
-                      className="w-full h-auto object-contain cursor-pointer"
+                      className="block max-w-full w-full h-auto object-contain cursor-pointer"
                       onClick={() => openImageModal(item.id, index)}
                     />
                   </div>
@@ -746,11 +747,11 @@ const MenuPage = () => {
               </div>
             </div>
           ) : (
-            <div className="w-full relative group rounded-lg overflow-hidden">
+            <div className="w-full max-w-full relative group rounded-lg overflow-hidden">
               <img
                 src={item.images[0].src}
                 alt={item.images[0].alt}
-                className="w-full h-auto object-contain cursor-pointer"
+                className="block max-w-full w-full h-auto object-contain cursor-pointer"
                 onClick={() => openImageModal(item.id, 0)}
               />
             </div>

@@ -65,6 +65,7 @@ export interface ArticleBlock {
   title: string;
   description?: string;
   col: number;
+  percentage?: number;
   // Campos específicos por componente
   content?: string; // rich-text
   pdf?: any[]; // pdf
@@ -359,7 +360,8 @@ const processBlock = (blockData: any): ArticleBlock => {
     id: blockData.id,
     title: blockData.title,
     description: blockData.description,
-    col: blockData.col || 12
+    col: blockData.col || 12,
+    percentage: blockData.percentage || 100
   };
 
   // Procesar campos específicos según el componente
