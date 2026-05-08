@@ -342,11 +342,6 @@ const ArticleDetailPage = () => {
           <h3 className="text-lg font-semibold text-foreground mb-2">
             {block.title}
           </h3>
-          <img 
-            src="/lovable-uploads/61d9626e-e3c2-4b14-b4e7-7069de2e0ecc.png" 
-            alt="Decorative border" 
-            className="w-full h-2 object-cover mb-4"
-          />
           
           {block.description && (
             <div className="text-sm leading-relaxed mb-4">
@@ -411,11 +406,6 @@ const ArticleDetailPage = () => {
           <h3 className="text-lg font-semibold text-foreground mb-2">
             {block.title}
           </h3>
-          <img 
-            src="/lovable-uploads/61d9626e-e3c2-4b14-b4e7-7069de2e0ecc.png" 
-            alt="Decorative border" 
-            className="w-full h-2 object-cover mb-4"
-          />
         </div>
 
         <ArticleImageSlider images={images} title={block.title} />
@@ -430,11 +420,6 @@ const ArticleDetailPage = () => {
           <h3 className="text-lg font-semibold text-foreground mb-2">
             {block.title}
           </h3>
-          <img 
-            src="/lovable-uploads/61d9626e-e3c2-4b14-b4e7-7069de2e0ecc.png" 
-            alt="Decorative border" 
-            className="w-full h-2 object-cover mb-4"
-          />
         </div>
 
         <div className="h-64 relative group rounded-lg overflow-hidden">
@@ -466,11 +451,6 @@ const ArticleDetailPage = () => {
           <h3 className="text-lg font-semibold text-foreground mb-2">
             {block.title}
           </h3>
-          <img 
-            src="/lovable-uploads/61d9626e-e3c2-4b14-b4e7-7069de2e0ecc.png" 
-            alt="Decorative border" 
-            className="w-full h-2 object-cover mb-4"
-          />
         </div>
 
         <div className="mb-6">
@@ -490,11 +470,6 @@ const ArticleDetailPage = () => {
           <h3 className="text-lg font-semibold text-foreground mb-2">
             {block.title}
           </h3>
-          <img 
-            src="/lovable-uploads/61d9626e-e3c2-4b14-b4e7-7069de2e0ecc.png" 
-            alt="Decorative border" 
-            className="w-full h-2 object-cover mb-4"
-          />
         </div>
 
         {block.description && (
@@ -550,11 +525,6 @@ const ArticleDetailPage = () => {
           <h3 className="text-lg font-semibold text-foreground mb-2">
             {block.title}
           </h3>
-          <img 
-            src="/lovable-uploads/61d9626e-e3c2-4b14-b4e7-7069de2e0ecc.png" 
-            alt="Decorative border" 
-            className="w-full h-2 object-cover mb-4"
-          />
         </div>
 
         {block.mediaImage && (
@@ -688,11 +658,6 @@ const ArticleDetailPage = () => {
 
           {/* Título y metadatos */}
           <h1 className="text-4xl font-bold text-foreground mb-4">{article.title}</h1>
-          <img 
-            src="/lovable-uploads/61d9626e-e3c2-4b14-b4e7-7069de2e0ecc.png" 
-            alt="Decorative border" 
-            className="w-full h-2 object-cover mb-6"
-          />
           
           <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
             {article.description}
