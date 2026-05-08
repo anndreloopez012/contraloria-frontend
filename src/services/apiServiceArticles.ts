@@ -12,6 +12,7 @@ import logger from '@/utils/logger';
 const API_CONFIG = {
   BASE_URL: `${getApiHost()}/api/redactions`,
   BEARER_TOKEN: getBearerToken(),
+  ARTICLES_PAGE_SIZE: 100,
 };
 
 // Tipos para los artículos
@@ -151,31 +152,64 @@ interface StrapiArticleDetailResponse {
  */
 export const fetchArticlesList = async (): Promise<Article[]> => {
   try {
-    const endpoint = `${API_CONFIG.BASE_URL}?populate=*`;
-    
     logger.log('🚀 Obteniendo lista FRESCA de artículos');
-    logger.log(`📡 Endpoint: ${endpoint}`);
+    
+    const headers = {
+      'Authorization': `Bearer ${API_CONFIG.BEARER_TOKEN}`,
+      'Content-Type': 'application/json',
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    };
 
-    const response = await fetch(endpoint, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${API_CONFIG.BEARER_TOKEN}`,
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0'
+    const allArticles: StrapiArticlesListResponse['data'] = [];
+    let currentPage = 1;
+    let totalPages = 1;
+
+    do {
+      const endpoint =
+        `${API_CONFIG.BASE_URL}` +
+        `?populate[author][populate]=avatar` +
+        `&populate[category]=*` +
+        `&populate[image]=*` +
+        `&populate[seo]=*` +
+        `&sort[0]=publishedAt:desc` +
+        `&sort[1]=id:desc` +
+        `&pagination[page]=${currentPage}` +
+        `&pagination[pageSize]=${API_CONFIG.ARTICLES_PAGE_SIZE}`;
+
+      logger.log(`📡 Endpoint página ${currentPage}: ${endpoint}`);
+
+      const response = await fetch(endpoint, {
+        method: 'GET',
+        headers,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+
+      const apiResponse: StrapiArticlesListResponse = await response.json();
+      logger.log(`📦 Página ${currentPage} recibida:`, apiResponse.meta?.pagination);
+
+      allArticles.push(...(apiResponse.data || []));
+      totalPages = apiResponse.meta?.pagination?.pageCount || 1;
+      currentPage += 1;
+    } while (currentPage <= totalPages);
+
+    logger.log(`📦 Total de artículos acumulados: ${allArticles.length}`);
+
+    const transformedData = transformStrapiArticlesListResponse({
+      data: allArticles,
+      meta: {
+        pagination: {
+          page: 1,
+          pageSize: allArticles.length,
+          pageCount: totalPages,
+          total: allArticles.length,
+        },
       },
     });
-
-    if (!response.ok) {
-      throw new Error(`Error ${response.status}: ${response.statusText}`);
-    }
-
-    const apiResponse: StrapiArticlesListResponse = await response.json();
-    logger.log('📦 Respuesta FRESCA del API de artículos:', apiResponse);
-
-    // Transformar datos de Strapi v5
-    const transformedData = transformStrapiArticlesListResponse(apiResponse);
 
     logger.log('✅ Lista de artículos transformada (SIN CACHÉ):', transformedData);
     return transformedData;

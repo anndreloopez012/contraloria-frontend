@@ -84,13 +84,17 @@ const ArticlesPage = () => {
 
   // Filtrar artículos
   const filteredArticles = articles.filter(article => {
+    const normalizedSearchTerm = searchTerm.toLowerCase();
+    const normalizedTitle = String(article.title || '').toLowerCase();
+    const normalizedDescription = String(article.description || '').toLowerCase();
+
     // Filtro por categoría
     const matchesCategory = selectedCategory === 'Todos' || 
       (article.category && article.category.name === selectedCategory);
     
     // Filtro por búsqueda
-    const matchesSearch = article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         article.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = normalizedTitle.includes(normalizedSearchTerm) ||
+                         normalizedDescription.includes(normalizedSearchTerm);
     
     return matchesCategory && matchesSearch;
   });
@@ -154,7 +158,7 @@ const ArticlesPage = () => {
         <div className="w-16 h-1 bg-gradient-to-r from-primary to-primary/50 rounded-full mb-4"></div>
         
         <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed mb-4">
-          {article.description}
+          {article.description || ''}
         </p>
 
         <div className="flex items-center justify-between text-xs text-muted-foreground">
@@ -211,7 +215,7 @@ const ArticlesPage = () => {
           </div>
           
           <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed mb-3">
-            {article.description}
+            {article.description || ''}
           </p>
 
           <div className="flex items-center justify-between text-xs text-muted-foreground">
