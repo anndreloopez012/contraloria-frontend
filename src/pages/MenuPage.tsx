@@ -689,6 +689,8 @@ const MenuPage = () => {
     
     if (!item.images || !Array.isArray(item.images) || item.images.length === 0) return null;
 
+    const currentImage = item.images[sliderState.currentIndex] || item.images[0];
+
     return (
       <div className="py-6 transition-all duration-200 animate-fade-in-up h-full">
         <div className="mb-6">
@@ -700,20 +702,13 @@ const MenuPage = () => {
         <div className="relative mb-6 max-w-full mx-auto" style={{ width: normalizedPercentage }}>
           {isMultipleImages ? (
             <div className="relative w-full max-w-full overflow-hidden rounded-lg">
-              <div 
-                className="flex transition-transform duration-500 ease-in-out"
-                style={{ transform: `translateX(-${sliderState.currentIndex * 100}%)` }}
-              >
-                {item.images.map((image, index) => (
-                  <div key={image.id} className="w-full flex-shrink-0 relative group">
-                    <img
-                      src={image.src}
-                      alt={image.alt}
-                      className="block max-w-full w-full h-auto object-contain cursor-pointer"
-                      onClick={() => openImageModal(item.id, index)}
-                    />
-                  </div>
-                ))}
+              <div className="w-full relative group">
+                <img
+                  src={currentImage.src}
+                  alt={currentImage.alt}
+                  className="block max-w-full w-full h-auto object-contain cursor-pointer"
+                  onClick={() => openImageModal(item.id, sliderState.currentIndex)}
+                />
               </div>
 
               <Button
