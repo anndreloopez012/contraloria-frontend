@@ -5,19 +5,22 @@
  * SIN CACHÉ - Los datos se obtienen siempre frescos del servidor
  */
 
-import { getApiHost, absUrl } from '@/config/apiEnv';
+import { getApiHost, getBearerToken, absUrl } from '@/config/apiEnv';
 import logger from '@/utils/logger';
 
 // Configuración del API
 const API_CONFIG = {
   BASE_URL: `${getApiHost()}/api/redactions`,
+  BEARER_TOKEN: getBearerToken(),
   ARTICLES_PAGE_SIZE: 100,
 };
 
 const buildSimpleGetOptions = (): RequestInit => ({
   method: 'GET',
   headers: {
+    'Content-Type': 'application/json',
     'Accept': 'application/json',
+    'Authorization': `Bearer ${API_CONFIG.BEARER_TOKEN}`,
   },
 });
 
