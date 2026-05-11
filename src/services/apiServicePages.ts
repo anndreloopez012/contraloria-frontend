@@ -113,6 +113,7 @@ interface SharedPDFBlock {
   description?: string;
   order: number;
   col: number;
+  percentage?: number;
   category?: Array<{
     id: number;
     documentId: string;
@@ -395,6 +396,7 @@ const transformContentBlock = (block: ContentBlock, index: number): ContentItem 
         subtype: 'PDF',
         buttonColor: pdfBlock.color_bottom || '#072B5A',
         pdfImage: pdfBlock.image ? `${SERVER_ORIGIN}${pdfBlock.image.url}` : undefined,
+        percentage: pdfBlock.percentage || 100,
         col: pdfBlock.col || 4
       };
     }

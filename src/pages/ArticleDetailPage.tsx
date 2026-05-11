@@ -335,6 +335,7 @@ const ArticleDetailPage = () => {
 
   const renderPDFContent = (block: ArticleBlock) => {
     const buttonColor = block.color_bottom || '#072B5A';
+    const normalizedPercentage = `${Math.min(Math.max(Number(block.percentage) || 100, 1), 100)}%`;
     
     return (
       <div className="p-6 transition-all duration-200 animate-fade-in h-full bg-white rounded-lg shadow-sm">
@@ -342,6 +343,18 @@ const ArticleDetailPage = () => {
           <h3 className="text-lg font-semibold text-foreground mb-2">
             {block.title}
           </h3>
+
+          {block.pdfImage && (
+            <div className="flex justify-center mb-4">
+              <div className="max-w-full" style={{ width: normalizedPercentage }}>
+                <img
+                  src={block.pdfImage.url}
+                  alt={block.pdfImage.alternativeText || block.title}
+                  className="block max-w-full w-full h-auto object-contain rounded"
+                />
+              </div>
+            </div>
+          )}
           
           {block.description && (
             <div className="text-sm leading-relaxed mb-4">

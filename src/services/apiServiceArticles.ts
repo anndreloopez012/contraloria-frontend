@@ -75,6 +75,7 @@ export interface ArticleBlock {
   description?: string;
   col: number;
   percentage?: number;
+  pdfImage?: ArticleImage;
   // Campos específicos por componente
   content?: string; // rich-text
   pdf?: any[]; // pdf
@@ -363,7 +364,11 @@ const processBlock = (blockData: any): ArticleBlock => {
   }
 
   if (blockData.image) {
-    if (Array.isArray(blockData.image)) {
+    if (blockData.__component === 'shared.pdf') {
+      processedBlock.pdfImage = Array.isArray(blockData.image)
+        ? processImage(blockData.image[0])
+        : processImage(blockData.image);
+    } else if (Array.isArray(blockData.image)) {
       processedBlock.image = blockData.image.map((img: any) => processImage(img)).filter(Boolean);
     } else {
       processedBlock.image = processImage(blockData.image);

@@ -488,6 +488,7 @@ const MenuPage = () => {
     const detectedVersion = getVersionFromDescription(itemDescription);
     const versionColor = detectedVersion ? getVersionColor(detectedVersion) : undefined;
     const buttonColor = versionColor || item.buttonColor || '#072B5A';
+    const normalizedPercentage = `${Math.min(Math.max(Number(item.percentage) || 100, 1), 100)}%`;
     
     return (
       <div className="p-6 transition-all duration-200 animate-fade-in h-full bg-white rounded-lg shadow-sm border border-border">
@@ -524,11 +525,13 @@ const MenuPage = () => {
           {/* Imagen del PDF centrada debajo del título */}
           {item.pdfImage && (
             <div className="flex justify-center mb-4">
-              <img
-                src={item.pdfImage}
-                alt={String(item.title || '')}
-                className="max-w-full h-auto max-h-32 object-contain rounded"
-              />
+              <div className="max-w-full" style={{ width: normalizedPercentage }}>
+                <img
+                  src={item.pdfImage}
+                  alt={String(item.title || '')}
+                  className="block max-w-full w-full h-auto object-contain rounded"
+                />
+              </div>
             </div>
           )}
           
@@ -584,6 +587,7 @@ const MenuPage = () => {
   const renderGroupedPDFContent = (group: Extract<PDFDisplayItem, { kind: 'group' }>) => {
     const primaryItem = group.primaryItem;
     const itemCategories = extractCategoriesFromPDF(primaryItem);
+    const normalizedPercentage = `${Math.min(Math.max(Number(primaryItem.percentage) || 100, 1), 100)}%`;
 
     return (
       <div className="p-6 transition-all duration-200 animate-fade-in h-full bg-white rounded-lg shadow-sm border border-border">
@@ -619,11 +623,13 @@ const MenuPage = () => {
 
           {primaryItem.pdfImage && (
             <div className="flex justify-center mb-4">
-              <img
-                src={primaryItem.pdfImage}
-                alt={group.title}
-                className="max-w-full h-auto max-h-32 object-contain rounded"
-              />
+              <div className="max-w-full" style={{ width: normalizedPercentage }}>
+                <img
+                  src={primaryItem.pdfImage}
+                  alt={group.title}
+                  className="block max-w-full w-full h-auto object-contain rounded"
+                />
+              </div>
             </div>
           )}
 
