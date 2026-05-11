@@ -35,9 +35,9 @@ const extractSlugFromPath = (section: string | undefined): string => {
 };
 
 const KNOWN_PDF_VERSIONS = [
+  'Versión Diario de Centroamérica',
   'Versión Contraloría General de Cuentas',
   'Versión Arte Final',
-  'Versión Diario de Centroamérica'
 ] as const;
 
 type KnownPDFVersion = typeof KNOWN_PDF_VERSIONS[number];
