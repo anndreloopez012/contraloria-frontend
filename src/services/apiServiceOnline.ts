@@ -97,8 +97,16 @@ function absoluteUrl(url?: string | null): string | null {
   return url.startsWith('/') ? `${API_CONFIG.BASE_URL}${url}` : url;
 }
 
+function isGifAsset(logo?: StrapiImage | null): boolean {
+  if (!logo) return false;
+  return logo.mime === 'image/gif' || logo.ext.toLowerCase() === '.gif';
+}
+
 function pickBestLogoUrl(logo?: StrapiImage | null): string | null {
   if (!logo) return null;
+  if (isGifAsset(logo)) {
+    return absoluteUrl(logo.url);
+  }
   const small = logo.formats?.small?.url;
   const thumb = logo.formats?.thumbnail?.url;
   const original = logo.url;
