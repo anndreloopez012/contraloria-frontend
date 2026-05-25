@@ -53,6 +53,12 @@ interface StrapiImage {
   publishedAt: string;
 }
 
+interface StrapiSliderItem {
+  id: number;
+  url?: string | null;
+  image?: StrapiImage | null;
+}
+
 interface StrapiHomeResponse {
   data: {
     id: number;
@@ -63,7 +69,8 @@ interface StrapiHomeResponse {
     publishedAt: string;
     Slider: {
       id: number;
-      files: StrapiImage[];
+      files?: StrapiImage[];
+      slides?: StrapiSliderItem[];
     };
   };
   meta: {};
@@ -76,6 +83,7 @@ export interface SliderImage {
   alt: string;
   title: string;
   description?: string;
+  url?: string | null;
 }
 
 // Tipo para los datos del home
@@ -114,19 +122,38 @@ function hasSliderImagesChanged(cachedImages: SliderImage[], newImages: SliderIm
  */
 function transformStrapiHomeResponse(response: StrapiHomeResponse): HomeData {
   logger.log('🔄 Transformando respuesta de Strapi Home:', response);
-  
-  const sliderImages: SliderImage[] = response.data.Slider.files.map((file, index) => {
-    // Construir URL completa de la imagen usando config
-    const imageUrl = absUrl(file.url);
-    
-    return {
-      id: file.documentId || file.id.toString(),
-      src: imageUrl,
-      alt: file.alternativeText || file.name || `Imagen ${index + 1}`,
-      title: file.caption || file.name || `Imagen ${index + 1}`,
-      description: file.alternativeText || undefined
-    };
-  });
+
+  const slider = response.data.Slider;
+  const sliderSlides = Array.isArray(slider?.slides) ? slider.slides : [];
+  const sliderFiles = Array.isArray(slider?.files) ? slider.files : [];
+
+  const sliderImages: SliderImage[] = sliderSlides.length > 0
+    ? sliderSlides
+        .filter((slide): slide is StrapiSliderItem & { image: StrapiImage } => Boolean(slide?.image))
+        .map((slide, index) => {
+          const imageUrl = absUrl(slide.image.url);
+
+          return {
+            id: slide.image.documentId || slide.image.id.toString(),
+            src: imageUrl,
+            alt: slide.image.alternativeText || slide.image.name || `Imagen ${index + 1}`,
+            title: slide.image.caption || slide.image.name || `Imagen ${index + 1}`,
+            description: slide.image.alternativeText || undefined,
+            url: slide.url || null,
+          };
+        })
+    : sliderFiles.map((file, index) => {
+        const imageUrl = absUrl(file.url);
+
+        return {
+          id: file.documentId || file.id.toString(),
+          src: imageUrl,
+          alt: file.alternativeText || file.name || `Imagen ${index + 1}`,
+          title: file.caption || file.name || `Imagen ${index + 1}`,
+          description: file.alternativeText || undefined,
+          url: null,
+        };
+      });
 
   const homeData: HomeData = {
     description: response.data.Description || '',

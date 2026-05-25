@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useContentAPI } from '@/hooks/useContentAPI';
+import { useNavigate } from 'react-router-dom';
 import {
   Carousel,
   CarouselContent,
@@ -9,11 +10,13 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
+import { navigateWithMenuUrl } from '@/utils/menuNavigation';
 
 const ImageSlider = () => {
   const { sliderImages, isLoading } = useContentAPI();
   const [api, setApi] = React.useState<CarouselApi>();
   const [current, setCurrent] = React.useState(0);
+  const navigate = useNavigate();
 
   const plugin = React.useRef(
     Autoplay({ delay: 5000, stopOnInteraction: true })
@@ -60,6 +63,11 @@ const ImageSlider = () => {
     return `Imagen ${index + 1}`;
   };
 
+  const handleSlideClick = (image: any) => {
+    if (!image?.url) return;
+    navigateWithMenuUrl(image.url, false, navigate);
+  };
+
   if (isLoading) {
     return (
       <div className="w-full h-96 bg-gray-200 animate-pulse flex items-center justify-center">
@@ -90,7 +98,19 @@ const ImageSlider = () => {
         <CarouselContent className="bg-gray-900">
           {sliderImages.map((image, index) => (
             <CarouselItem key={index} className="relative">
-              <div className="relative w-full flex items-center justify-center bg-gray-900">
+              <div
+                className={`relative w-full flex items-center justify-center bg-gray-900 ${image.url ? 'cursor-pointer' : ''}`}
+                onClick={() => handleSlideClick(image)}
+                role={image.url ? 'link' : undefined}
+                tabIndex={image.url ? 0 : -1}
+                onKeyDown={(event) => {
+                  if (!image.url) return;
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    handleSlideClick(image);
+                  }
+                }}
+              >
                 <img
                   src={getSafeSrc(image)}
                   alt={getSafeAlt(image, index)}
