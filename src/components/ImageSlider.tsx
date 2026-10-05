@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { navigateWithMenuUrl } from '@/utils/menuNavigation';
+import { absUrl } from '@/config/apiEnv';
 
 const ImageSlider = () => {
   const { sliderImages, isLoading } = useContentAPI();
@@ -32,7 +33,7 @@ const ImageSlider = () => {
     });
   }, [api]);
 
-  // Función helper para obtener src seguro
+  // Función helper para obtener src seguro usando la configuración dinámica de la API
   const getSafeSrc = (image: any) => {
     let src = '';
     if (typeof image === 'string') src = image;
@@ -45,13 +46,7 @@ const ImageSlider = () => {
       return src;
     }
     
-    if (src.startsWith('/')) {
-      const baseHost = 'https://cgc-adm.server-softplus.plus';
-      return `${baseHost}${src}`;
-    }
-    
-    const baseHost = 'https://cgc-adm.server-softplus.plus';
-    return `${baseHost}/uploads/${src}`;
+    return absUrl(src.startsWith('/') ? src : `/uploads/${src}`);
   };
   
   // Función helper para obtener alt seguro
@@ -88,11 +83,11 @@ const ImageSlider = () => {
     <div className="w-full bg-white">
       <Carousel
         setApi={setApi}
-        plugins={[plugin.current]}
+        plugins={sliderImages.length > 1 ? [plugin.current] : []}
         className="w-full"
         opts={{
           align: "center",
-          loop: true,
+          loop: sliderImages.length > 1,
         }}
       >
         <CarouselContent className="bg-gray-900">
@@ -123,31 +118,35 @@ const ImageSlider = () => {
           ))}
         </CarouselContent>
         
-        <CarouselPrevious 
-          className="left-4 text-white border-white/20 hover:bg-white/20"
-          style={{ backgroundColor: '#102D69' }}
-        />
-        <CarouselNext 
-          className="right-4 text-white border-white/20 hover:bg-white/20"
-          style={{ backgroundColor: '#102D69' }}
-        />
-
-        {/* Indicadores de puntos */}
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10">
-          {sliderImages.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => api?.scrollTo(index)}
-              className={`h-3 transition-all duration-200 rounded-full ${
-                index === current ? 'w-8' : 'w-3 hover:opacity-70'
-              }`}
-              style={{ 
-                backgroundColor: index === current ? '#102D69' : 'rgba(16, 45, 105, 0.5)' 
-              }}
-              aria-label={`Ir a imagen ${index + 1}`}
+        {sliderImages.length > 1 && (
+          <>
+            <CarouselPrevious 
+              className="left-4 text-white border-white/20 hover:bg-white/20"
+              style={{ backgroundColor: '#102D69' }}
             />
-          ))}
-        </div>
+            <CarouselNext 
+              className="right-4 text-white border-white/20 hover:bg-white/20"
+              style={{ backgroundColor: '#102D69' }}
+            />
+
+            {/* Indicadores de puntos */}
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10">
+              {sliderImages.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => api?.scrollTo(index)}
+                  className={`h-3 transition-all duration-200 rounded-full ${
+                    index === current ? 'w-8' : 'w-3 hover:opacity-70'
+                  }`}
+                  style={{ 
+                    backgroundColor: index === current ? '#102D69' : 'rgba(16, 45, 105, 0.5)' 
+                  }}
+                  aria-label={`Ir a imagen ${index + 1}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </Carousel>
 
       {/* Marco decorativo inferior */}

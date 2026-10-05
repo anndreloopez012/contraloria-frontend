@@ -10,7 +10,7 @@ import logger from '@/utils/logger';
 const API_CONFIG = {
   BASE_URL: `${getApiHost()}/api/home`,
   BEARER_TOKEN: getBearerToken(),
-  ENDPOINT_PARAMS: 'populate[Slider][populate]=*'
+  ENDPOINT_PARAMS: 'populate[Slider][populate][slides][populate]=*&populate[Slider][populate][files]=*'
 };
 
 // Tipos para la respuesta de Strapi
@@ -29,34 +29,34 @@ interface StrapiImageFormat {
 
 interface StrapiImage {
   id: number;
-  documentId: string;
+  documentId?: string;
   name: string;
   alternativeText: string | null;
   caption: string | null;
-  width: number;
-  height: number;
-  formats: {
+  width?: number;
+  height?: number;
+  formats?: {
     small?: StrapiImageFormat;
     medium?: StrapiImageFormat;
     thumbnail?: StrapiImageFormat;
   };
-  hash: string;
-  ext: string;
-  mime: string;
-  size: number;
+  hash?: string;
+  ext?: string;
+  mime?: string;
+  size?: number;
   url: string;
-  previewUrl: string | null;
-  provider: string;
-  provider_metadata: any;
-  createdAt: string;
-  updatedAt: string;
-  publishedAt: string;
+  previewUrl?: string | null;
+  provider?: string;
+  provider_metadata?: any;
+  createdAt?: string;
+  updatedAt?: string;
+  publishedAt?: string;
 }
 
 interface StrapiSliderItem {
   id: number;
   url?: string | null;
-  image?: StrapiImage | null;
+  image?: StrapiImage | StrapiImage[] | { data?: any } | null;
 }
 
 interface StrapiHomeResponse {
@@ -70,6 +70,7 @@ interface StrapiHomeResponse {
     Slider: {
       id: number;
       slides?: StrapiSliderItem[];
+      files?: (StrapiImage | { data?: any })[];
     } | null;
   };
   meta: {};
@@ -92,9 +93,42 @@ export interface HomeData {
 }
 
 /**
+ * Helper para extraer la información de imagen sin importar la estructura de Strapi (v4/v5, data wrapper, array o individual)
+ */
+function extractMediaInfo(rawMedia: any): { id: string; url: string; alt: string; title: string; description?: string } | null {
+  if (!rawMedia) return null;
+
+  // Si viene como arreglo, tomar el primer elemento
+  const item = Array.isArray(rawMedia) ? rawMedia[0] : rawMedia;
+  if (!item) return null;
+
+  // Desempaquetar si viene con wrapper de data (Strapi v4 o configuraciones específicas)
+  const data = item.data ? (Array.isArray(item.data) ? item.data[0] : item.data) : item;
+  if (!data) return null;
+
+  // Desempaquetar si viene con attributes
+  const attrs = data.attributes ? data.attributes : data;
+  const rawUrl = attrs.url || data.url || item.url;
+  if (!rawUrl || typeof rawUrl !== 'string') return null;
+
+  const docId = (data.documentId || data.id || item.documentId || item.id || '').toString();
+  const alt = attrs.alternativeText || attrs.name || data.name || item.name || '';
+  const title = attrs.caption || attrs.name || data.name || item.name || '';
+
+  return {
+    id: docId,
+    url: absUrl(rawUrl),
+    alt,
+    title,
+    description: attrs.alternativeText || undefined,
+  };
+}
+
+/**
  * Compara si las imágenes del slider han cambiado
  */
 function hasSliderImagesChanged(cachedImages: SliderImage[], newImages: SliderImage[]): boolean {
+  if (!cachedImages || !newImages) return true;
   if (cachedImages.length !== newImages.length) {
     logger.log('🔄 Cantidad de imágenes cambió:', cachedImages.length, '->', newImages.length);
     return true;
@@ -122,26 +156,49 @@ function hasSliderImagesChanged(cachedImages: SliderImage[], newImages: SliderIm
 function transformStrapiHomeResponse(response: StrapiHomeResponse): HomeData {
   logger.log('🔄 Transformando respuesta de Strapi Home:', response);
 
-  const slider = response.data.Slider;
+  const slider = response?.data?.Slider;
   const sliderSlides = Array.isArray(slider?.slides) ? slider.slides : [];
+  const sliderFiles = Array.isArray(slider?.files) ? slider.files : [];
 
-  const sliderImages: SliderImage[] = sliderSlides
-    .filter((slide): slide is StrapiSliderItem & { image: StrapiImage } => Boolean(slide?.image))
+  // 1. Intentar procesar slides individuales con enlaces
+  let sliderImages: SliderImage[] = sliderSlides
     .map((slide, index) => {
-      const imageUrl = absUrl(slide.image.url);
+      const media = extractMediaInfo(slide?.image);
+      if (!media) return null;
 
       return {
-        id: slide.id.toString(),
-        src: imageUrl,
-        alt: slide.image.alternativeText || slide.image.name || `Imagen ${index + 1}`,
-        title: slide.image.caption || slide.image.name || `Imagen ${index + 1}`,
-        description: slide.image.alternativeText || undefined,
+        id: (slide.id || media.id || index + 1).toString(),
+        src: media.url,
+        alt: media.alt || `Imagen ${index + 1}`,
+        title: media.title || `Imagen ${index + 1}`,
+        description: media.description,
         url: slide.url || null,
       };
-    });
+    })
+    .filter((img): img is SliderImage => img !== null);
+
+  // 2. Fallback a slider.files si slides está vacío
+  if (sliderImages.length === 0 && sliderFiles.length > 0) {
+    logger.log('ℹ️ Usando fallback de slider.files');
+    sliderImages = sliderFiles
+      .map((file, index) => {
+        const media = extractMediaInfo(file);
+        if (!media) return null;
+
+        return {
+          id: (media.id || index + 1).toString(),
+          src: media.url,
+          alt: media.alt || `Imagen ${index + 1}`,
+          title: media.title || `Imagen ${index + 1}`,
+          description: media.description,
+          url: null,
+        };
+      })
+      .filter((img): img is SliderImage => img !== null);
+  }
 
   const homeData: HomeData = {
-    description: response.data.Description || '',
+    description: response?.data?.Description || '',
     sliderImages
   };
 
