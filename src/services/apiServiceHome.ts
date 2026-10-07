@@ -10,7 +10,7 @@ import logger from '@/utils/logger';
 const API_CONFIG = {
   BASE_URL: `${getApiHost()}/api/home`,
   BEARER_TOKEN: getBearerToken(),
-  ENDPOINT_PARAMS: 'populate[Slider][populate][slides][populate]=*&populate[Slider][populate][files]=*'
+  ENDPOINT_PARAMS: 'populate[Slider][populate][slides][populate]=*'
 };
 
 // Tipos para la respuesta de Strapi
@@ -248,13 +248,18 @@ export async function fetchHomeData(): Promise<HomeData> {
         
         // Si la caché es válida, verificar si hay cambios en las imágenes
         if (isCacheValid) {
-          const imagesChanged = hasSliderImagesChanged(cachedHomeData.sliderImages, newHomeData.sliderImages);
-          
-          if (!imagesChanged) {
-            logger.log('📦 Usando datos del home desde caché (sin cambios detectados)');
-            return cachedHomeData;
+          // Si la caché guardada no tiene imágenes pero la API sí devolvió, descartar caché vacía
+          if ((!cachedHomeData?.sliderImages || cachedHomeData.sliderImages.length === 0) && newHomeData.sliderImages.length > 0) {
+            logger.log('🔄 Descartando caché vacía y guardando nuevas imágenes...');
           } else {
-            logger.log('🔄 Cambios detectados en imágenes del slider, actualizando caché...');
+            const imagesChanged = hasSliderImagesChanged(cachedHomeData.sliderImages, newHomeData.sliderImages);
+            
+            if (!imagesChanged) {
+              logger.log('📦 Usando datos del home desde caché (sin cambios detectados)');
+              return cachedHomeData;
+            } else {
+              logger.log('🔄 Cambios detectados en imágenes del slider, actualizando caché...');
+            }
           }
         } else {
           logger.log('⏰ Caché expirado, actualizando...');
@@ -276,12 +281,16 @@ export async function fetchHomeData(): Promise<HomeData> {
   } catch (error) {
     logger.error('❌ Error al obtener datos del home:', error);
     
-    // Intentar usar caché aunque esté expirado
+    // Intentar usar caché aunque esté expirado SOLO si tiene imágenes
     const cachedData = localStorage.getItem(cacheKey);
     if (cachedData) {
-      logger.log('⚠️ Usando caché expirado como fallback');
-      const { data } = JSON.parse(cachedData);
-      return data;
+      try {
+        const { data } = JSON.parse(cachedData);
+        if (data?.sliderImages && data.sliderImages.length > 0) {
+          logger.log('⚠️ Usando caché expirado como fallback');
+          return data;
+        }
+      } catch {}
     }
 
     // Fallback con datos vacíos

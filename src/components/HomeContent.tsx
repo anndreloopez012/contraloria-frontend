@@ -221,26 +221,14 @@ const HomeContent = () => {
         </div>
       </section>
 
-      {/* Header Image o título de Servicios en Línea */}
+      {/* Título de Servicios en Línea */}
       <section className="w-full animate-fade-in" style={{ animationDelay: '200ms' }}>
-        {homeIntroData?.headerImage ? (
-          <div className="w-full">
-            <img
-              src={homeIntroData.headerImage.formats?.large || homeIntroData.headerImage.src}
-              alt={homeIntroData.headerImage.alt}
-              title={homeIntroData.headerImage.title}
-              className="w-full h-auto object-cover"
-              loading="lazy"
-            />
+        <div className="py-8 text-center">
+          <div className="inline-block">
+            <h2 className="text-3xl font-bold text-blue-900 mb-3">SERVICIOS EN LÍNEA</h2>
+            <div className="w-full h-1 bg-gradient-to-r from-blue-600 to-blue-400 rounded-full"></div>
           </div>
-        ) : (
-          <div className="py-8 text-center">
-            <div className="inline-block">
-              <h2 className="text-3xl font-bold text-blue-900 mb-3">SERVICIOS EN LÍNEA</h2>
-              <div className="w-full h-1 bg-gradient-to-r from-blue-600 to-blue-400 rounded-full"></div>
-            </div>
-          </div>
-        )}
+        </div>
       </section>
 
       {/* Descripción */}
